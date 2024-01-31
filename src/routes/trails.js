@@ -3,8 +3,13 @@ const router = express.Router();
 
 // GET request for list of trails
 router.get('/', (req, res) => {
-    // Logic to fetch all trails
-    res.send('List of all trails');
+    pool.query('SELECT * FROM Trails', (error, results) => {
+        if (error) {
+            console.error('Error fetching data from the database:', error);
+            return res.status(500).json({ message: 'Error retrieving trails'})
+        }
+        res.status(200).json(results);
+    })
 });
 
 module.exports = router;
