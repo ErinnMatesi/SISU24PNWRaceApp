@@ -15,21 +15,52 @@ router.get('/', (req, res) => {
 
 // Add a new racer
 router.post('/', (req, res) => {
-    // Example validation: Check if required fields are present
-    const { fullName, gender, bibNumber, division } = req.body;
-    if (!fullName || !gender || !bibNumber || !division) {
-        return res.status(400).json({ message: 'Missing required fields' });
-    }
+  let racers = req.body;
 
-    // Insert logic with error handling
-    const insertQuery = 'INSERT INTO Racers (FullName, Gender, BibNumber, Division) VALUES (?, ?, ?, ?)';
-    pool.query(insertQuery, [fullName, gender, bibNumber, division], (error, results) => {
-        if (error) {
-            console.error('Error inserting data into database:', error);
-            return res.status(500).json({ message: 'Error adding racer' });
-        }
-        res.status(201).json({ message: 'Racer added successfully', racerId: results.insertId });
-    });
+  // Check if racers is an array, if not, make it an array
+  if (!Array.isArray(racers)) {
+      racers = [racers];
+  }
+
+  // Optional: Add validation for each racer object
+
+  const insertQuery = 'INSERT INTO Racers (FullName, Gender, Age, BibNumber, Division, TeamID) VALUES ?';
+  const values = racers.map(racer => [racer.fullName, racer.gender, racer.age, racer.bibNumber, racer.division, racer.teamId]);
+
+  pool.query(insertQuery, [values], (error, results) => {
+      if (error) {
+          console.error('Error inserting data into database:', error);
+          return res.status(500).json({ message: 'Error adding racers' });
+      }
+      res.status(201).json({ message: 'Racers added successfully', affectedRows: results.affectedRows });
+  });
+});
+
+
+// PUT request to update a racer
+router.put('/:racerId', (req, res) => {
+  const { racerId } = req.params;
+  const { fullName, gender, age, bibNumber, division, teamId } = req.body;
+
+  // Check if racer ID is provided
+  if (!racerId) {
+      return res.status(400).json({ message: 'Racer ID is required' });
+  }
+
+  // Optional: Add additional validation as needed
+
+  // Update logic with error handling
+  const updateQuery = 'UPDATE Racers SET FullName = ?, Gender = ?, Age = ?, BibNumber = ?, Division = ?, TeamID = ? WHERE RacerID = ?';
+  pool.query(updateQuery, [fullName, gender, age, bibNumber, division, teamId, racerId], (error, results) => {
+      if (error) {
+          console.error(`Error updating racer with ID: ${racerId}`, error);
+          return res.status(500).json({ message: 'Error updating racer' });
+      }
+      if (results.affectedRows === 0) {
+          return res.status(404).json({ message: 'Racer not found' });
+      }
+      res.status(200).json({ message: `Racer with ID ${racerId} updated successfully.` });
+  });
 });
 
 // DELETE request to remove a racer

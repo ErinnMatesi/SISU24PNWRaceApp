@@ -12,6 +12,12 @@ const app = express();
 // Import all routes
 const { racersRouter, teamsRouter, trailsRouter, raceEntryRouter, bonusObjectiveRouter, raceResultsRouter } = require('./routes');
 
+// Middleware
+app.use(cors()); // Enable CORS for all routes
+app.use(morgan('dev')); // Logger
+app.use(bodyParser.json()); // Parse JSON bodies
+app.use(bodyParser.urlencoded({ extended: true })); // Parse URL-encoded bodies
+
 // Use routes
 app.use('/racers', racersRouter);
 app.use('/teams', teamsRouter);
@@ -19,12 +25,6 @@ app.use('/trails', trailsRouter);
 app.use('/raceEntry', raceEntryRouter);
 app.use('/bonusObjective', bonusObjectiveRouter);
 app.use('/raceResults', raceResultsRouter);
-
-// Middleware
-app.use(cors()); // Enable CORS for all routes
-app.use(morgan('dev')); // Logger
-app.use(bodyParser.json()); // Parse JSON bodies
-app.use(bodyParser.urlencoded({ extended: true })); // Parse URL-encoded bodies
 
 // Test Route
 app.get('/', (req, res) => {

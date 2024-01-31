@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const pool = require('../config/dbConfig');
 
 // GET request for list of trails
 router.get('/', (req, res) => {
