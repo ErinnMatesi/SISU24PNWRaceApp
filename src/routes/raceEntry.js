@@ -30,6 +30,29 @@ router.post('/', (req, res) => {
     });
 });
 
+// PUT request to update a race entry
+router.put('/:entryId', (req, res) => {
+    const { entryId } = req.params;
+    const { endTime, pointsEarned, bonusPointsEarned } = req.body;
+
+    // Validate the input
+    if (!entryId) {
+        return res.status(400).json({ message: 'Entry ID is required' });
+    }
+
+    const updateQuery = 'UPDATE RaceEntries SET EndTime = ?, PointsEarned = ?, BonusPointsEarned = ? WHERE EntryID = ?';
+    pool.query(updateQuery, [endTime, pointsEarned, bonusPointsEarned, entryId], (error, results) => {
+        if (error) {
+            console.error(`Error updating race entry with ID: ${entryId}`, error);
+            return res.status(500).json({ message: 'Error updating race entry' });
+        }
+        if (results.affectedRows === 0) {
+            return res.status(404).json({ message: 'Race entry not found' });
+        }
+        res.status(200).json({ message: `Race entry with ID ${entryId} updated successfully.` });
+    });
+});
+
 // DELETE request to remove a race entry
 router.delete('/:entryId', (req, res) => {
     const { entryId } = req.params;

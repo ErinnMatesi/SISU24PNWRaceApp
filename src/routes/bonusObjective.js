@@ -16,17 +16,53 @@ router.get('/', (req, res) => {
 // POST request to add a new bonus objective
 router.post('/', (req, res) => {
     const { description, associatedTrailID, bonusPoints } = req.body;
-    if (!description || !associatedTrailID || bonusPoints === undefined) {
+
+    // Check if required fields are provided (assuming description and bonusPoints are required)
+    if (!description || bonusPoints === undefined) {
         return res.status(400).json({ message: 'Missing required fields' });
     }
 
+    // associatedTrailID can be null or undefined, so handle it separately
+    const trailID = associatedTrailID !== undefined ? associatedTrailID : null;
+
     const insertQuery = 'INSERT INTO BonusObjectives (Description, AssociatedTrailID, BonusPoints) VALUES (?, ?, ?)';
-    pool.query(insertQuery, [description, associatedTrailID, bonusPoints], (error, results) => {
+    pool.query(insertQuery, [description, trailID, bonusPoints], (error, results) => {
         if (error) {
-            console.error('Error inserting data into database:', error);
-            return res.status(500).json({ message: 'Error adding bonus objective' });
+            console.error('Error adding new bonus objective:', error);
+            return res.status(500).json({ message: 'Error adding new bonus objective' });
         }
-        res.status(201).json({ message: 'Bonus objective added successfully', objectiveId: results.insertId });
+        res.status(201).json({ message: 'New bonus objective added successfully', objectiveId: results.insertId });
+    });
+});
+
+// PUT request to update a bonus objective
+router.put('/:objectiveId', (req, res) => {
+    const { objectiveId } = req.params;
+    const { description, associatedTrailID, bonusPoints } = req.body;
+
+    // Check if objective ID is provided
+    if (!objectiveId) {
+        return res.status(400).json({ message: 'Objective ID is required' });
+    }
+
+    // Check if required fields are provided (assuming description and bonusPoints are required)
+    if (!description || bonusPoints === undefined) {
+        return res.status(400).json({ message: 'Missing required fields' });
+    }
+
+    // associatedTrailID can be null, so we handle it separately
+    const trailID = associatedTrailID !== undefined ? associatedTrailID : null;
+
+    const updateQuery = 'UPDATE BonusObjectives SET Description = ?, AssociatedTrailID = ?, BonusPoints = ? WHERE ObjectiveID = ?';
+    pool.query(updateQuery, [description, trailID, bonusPoints, objectiveId], (error, results) => {
+        if (error) {
+            console.error(`Error updating bonus objective with ID: ${objectiveId}`, error);
+            return res.status(500).json({ message: 'Error updating bonus objective' });
+        }
+        if (results.affectedRows === 0) {
+            return res.status(404).json({ message: 'Bonus objective not found' });
+        }
+        res.status(200).json({ message: `Bonus objective with ID ${objectiveId} updated successfully.` });
     });
 });
 
