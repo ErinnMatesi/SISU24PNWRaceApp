@@ -9,7 +9,7 @@ const BibNumberInput = () => {
         if (!bibNumber) return;
 
         try {
-            const response = await fetch(`/api/racers/${bibNumber}`);
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/racers/${bibNumber}`);
             const data = await response.json();
             if (data) {
                 // Assuming the API returns an object with racer's first and last name
