@@ -1,0 +1,12 @@
+.bib-number-form {
+  margin: 20px;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+.bib-number-form label {
+  margin-right: 10px;
+}
+.bib-number-form input {
+  margin-right: 10px;
+}

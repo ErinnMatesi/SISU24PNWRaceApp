@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import './index.css';
 
 const BibNumberInput = () => {
     const [bibNumber, setBibNumber] = useState('');
@@ -14,15 +15,18 @@ const BibNumberInput = () => {
             if (data) {
                 // Assuming the API returns an object with racer's first and last name
                 setRacerName(`${data.firstName} ${data.lastName}`);
+            } else {
+                // Handle the case where racer is not found or data is empty
+                setRacerName('Racer not found');
             }
         } catch (error) {
             console.error('Error fetching racer details:', error);
-            setRacerName('Racer not found'); // Handle error or case when racer is not found
+            setRacerName('Error fetching details');
         }
     };
 
     return (
-        <div>
+        <div className="bib-number-form">
             <form onSubmit={handleBibNumberSubmit}>
                 <label htmlFor="bibNumber">Bib Number:</label>
                 <input
@@ -34,7 +38,7 @@ const BibNumberInput = () => {
                 />
                 <button type="submit">Submit</button>
             </form>
-            {racerName && <div>Racer Name: {racerName}</div>} {/* Display racer name */}
+            {racerName && <div>Racer Name: {racerName}</div>}
         </div>
     );
 };
