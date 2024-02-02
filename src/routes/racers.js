@@ -13,6 +13,23 @@ router.get('/', (req, res) => {
     });
 });
 
+// New route for fetching racer details by bib number
+router.get('/:bibNumber', async (req, res) => {
+    const { bibNumber } = req.params;
+    try {
+        // Logic to fetch racer details from your database using the bibNumber
+        // This is just a placeholder. You'll replace it with your actual database query
+        const racerDetails = await YourDatabaseQueryFunction(bibNumber);
+        if (!racerDetails) {
+            return res.status(404).send('Racer not found');
+        }
+        res.json(racerDetails);
+    } catch (error) {
+        console.error('Error fetching racer details:', error);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
 // Add a new racer
 router.post('/', (req, res) => {
   let racers = req.body;
