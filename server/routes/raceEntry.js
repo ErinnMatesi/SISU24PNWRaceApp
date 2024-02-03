@@ -13,6 +13,22 @@ router.get('/', (req, res) => {
     });
 });
 
+router.get('/active', async (req, res) => {
+    try {
+        const activeEntries = await PullActiveRacers(`
+            SELECT RaceEntries.startTime, Racers.firstName, Racers.lastName 
+            FROM RaceEntries 
+            JOIN Racers ON RaceEntries.racerId = Racers.id 
+            WHERE RaceEntries.endTime IS NULL 
+            ORDER BY RaceEntries.startTime ASC
+        `);
+        res.json(activeEntries);
+    } catch (error) {
+        console.error('Error fetching active race entries:', error);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
 // POST request to add a new race entry
 router.post('/', (req, res) => {
     const { racerId, trailId, startTime, endTime, pointsEarned, bonusPointsEarned } = req.body;

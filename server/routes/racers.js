@@ -17,9 +17,7 @@ router.get('/', (req, res) => {
 router.get('/:bibNumber', async (req, res) => {
     const { bibNumber } = req.params;
     try {
-        // Logic to fetch racer details from your database using the bibNumber
-        // This is just a placeholder. You'll replace it with your actual database query
-        const racerDetails = await YourDatabaseQueryFunction(bibNumber);
+        const racerDetails = await PullRacerByBib(bibNumber);
         if (!racerDetails) {
             return res.status(404).send('Racer not found');
         }

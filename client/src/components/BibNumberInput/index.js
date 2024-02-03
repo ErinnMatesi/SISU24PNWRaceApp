@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './index.css';
 
-const BibNumberInput = () => {
+const BibNumberInput = ( { onRacerSelected } ) => {
     const [bibNumber, setBibNumber] = useState('');
     const [racerName, setRacerName] = useState(''); // State to store racer name
 
@@ -15,6 +15,7 @@ const BibNumberInput = () => {
             if (data) {
                 // Assuming the API returns an object with racer's first and last name
                 setRacerName(`${data.firstName} ${data.lastName}`);
+                onRacerSelected(data);
             } else {
                 // Handle the case where racer is not found or data is empty
                 setRacerName('Racer not found');

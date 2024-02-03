@@ -1,6 +1,7 @@
 import logo from './logo.svg';
 import './App.css';
 import BibNumberInput from './components/BibNumberInput/index';
+import ActiveRunnerList from './components/ActiveRunnerList';
 
 
 function App() {
@@ -8,6 +9,7 @@ function App() {
     <div className="App">
       <header className="App-header">
       <BibNumberInput />
+      <ActiveRunnerList />
         <img src={logo} className="App-logo" alt="logo" />
         <p>
           Edit <code>src/App.js</code> and save to reload.
