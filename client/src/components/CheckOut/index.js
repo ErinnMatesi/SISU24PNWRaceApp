@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import BibNumberInput from '../BibNumberInput';
-import './CheckOutForm.css';
+import './index.css';
 
 const trails = [
     { id: 1, name: 'Noble Knob' },

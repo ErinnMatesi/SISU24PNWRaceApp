@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import './ActiveRunnerList.css';
+import './index.css';
 
 const ActiveRunnerList = () => {
     const [activeRunners, setActiveRunners] = useState([]);
