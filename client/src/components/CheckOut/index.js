@@ -19,7 +19,7 @@ const CheckOutForm = () => {
 
     const handleRacerSelected = (data) => {
       setRacerDetails(data); // Store the racer details fetched by BibNumberInput
-  };
+    };
 
   const handleSubmit = async (e) => {
       e.preventDefault();

@@ -29,6 +29,31 @@ router.get('/active', async (req, res) => {
     }
 });
 
+// GET request for the latest race entry of a specific racer
+router.get('/latest/:racerId', async (req, res) => {
+    const { racerId } = req.params;
+    try {
+        const query = `
+            SELECT RaceEntries.*, Trails.FirstTenPoints, Trails.SecondTenPoints, Trails.Name as TrailName
+            FROM RaceEntries
+            JOIN Trails ON RaceEntries.TrailID = Trails.ID
+            WHERE RaceEntries.RacerID = ?
+            ORDER BY RaceEntries.StartTime DESC
+            LIMIT 1;
+        `;
+        const results = await pool.query(query, [racerId]);
+        if (results.length > 0) {
+            res.json(results[0]);
+        } else {
+            res.status(404).json({ message: 'No race entries found for the specified racer.' });
+        }
+    } catch (error) {
+        console.error(`Error fetching the latest race entry for racer ID: ${racerId}`, error);
+        res.status(500).json({ message: 'Error retrieving the latest race entry.' });
+    }
+});
+
+
 // POST request to add a new race entry
 router.post('/', (req, res) => {
     const { racerId, trailId, startTime, endTime, pointsEarned, bonusPointsEarned } = req.body;
@@ -46,27 +71,25 @@ router.post('/', (req, res) => {
     });
 });
 
-// PUT request to update a race entry
-router.put('/:entryId', (req, res) => {
+// PUT request to update a race entry with completion status
+router.put('/checkin/:entryId', async (req, res) => {
     const { entryId } = req.params;
-    const { endTime, pointsEarned, bonusPointsEarned } = req.body;
+    const { endTime, pointsEarned } = req.body; // Directly using pointsEarned sent from the frontend
 
-    // Validate the input
-    if (!entryId) {
-        return res.status(400).json({ message: 'Entry ID is required' });
-    }
+    try {
+        const updateQuery = 'UPDATE RaceEntries SET EndTime = ?, PointsEarned = ? WHERE EntryID = ?';
+        const results = await pool.query(updateQuery, [endTime, pointsEarned, entryId]);
 
-    const updateQuery = 'UPDATE RaceEntries SET EndTime = ?, PointsEarned = ?, BonusPointsEarned = ? WHERE EntryID = ?';
-    pool.query(updateQuery, [endTime, pointsEarned, bonusPointsEarned, entryId], (error, results) => {
-        if (error) {
-            console.error(`Error updating race entry with ID: ${entryId}`, error);
-            return res.status(500).json({ message: 'Error updating race entry' });
-        }
         if (results.affectedRows === 0) {
+            // If no rows were affected, it means the entryId didn't match any records
             return res.status(404).json({ message: 'Race entry not found' });
         }
+
         res.status(200).json({ message: `Race entry with ID ${entryId} updated successfully.` });
-    });
+    } catch (error) {
+        console.error(`Error updating race entry with ID: ${entryId}`, error);
+        res.status(500).json({ message: 'Error updating race entry' });
+    }
 });
 
 // DELETE request to remove a race entry
