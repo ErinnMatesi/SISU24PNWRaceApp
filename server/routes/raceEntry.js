@@ -34,7 +34,7 @@ router.get('/latest/:racerId', async (req, res) => {
     const { racerId } = req.params;
     try {
         const query = `
-            SELECT RaceEntries.*, Trails.FirstTenPoints, Trails.SecondTenPoints, Trails.Name as TrailName
+            SELECT RaceEntries.*, Trails.BasePoints, Trails.FirstTenPoints, Trails.SecondTenPoints, Trails.Name as TrailName
             FROM RaceEntries
             JOIN Trails ON RaceEntries.TrailID = Trails.ID
             WHERE RaceEntries.RacerID = ?
@@ -52,7 +52,6 @@ router.get('/latest/:racerId', async (req, res) => {
         res.status(500).json({ message: 'Error retrieving the latest race entry.' });
     }
 });
-
 
 // POST request to add a new race entry
 router.post('/', (req, res) => {

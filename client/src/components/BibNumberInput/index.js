@@ -13,7 +13,6 @@ const BibNumberInput = ( { onRacerSelected } ) => {
             const response = await fetch(`${process.env.REACT_APP_API_URL}/racers/${bibNumber}`);
             const data = await response.json();
             if (data) {
-                // Assuming the API returns an object with racer's first and last name
                 setRacerName(`${data.firstName} ${data.lastName}`);
                 onRacerSelected(data);
             } else {

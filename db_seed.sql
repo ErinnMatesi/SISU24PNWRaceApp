@@ -14,13 +14,16 @@ CREATE TABLE IF NOT EXISTS Trails (
     TrailName VARCHAR(255) NOT NULL,
     Distance DECIMAL(5,2) NOT NULL,
     ElevationGain INT NOT NULL,
-    BasePoints INT NOT NULL
+    BasePoints INT NOT NULL,
+    FirstTenPoints INT NOT NULL,
+    SecondTenPoints INT NOT NULL,
 );
 
 -- Create Racers Table
 CREATE TABLE IF NOT EXISTS Racers (
     RacerID INT AUTO_INCREMENT PRIMARY KEY,
-    FullName VARCHAR(255) NOT NULL,
+    FirstName VARCHAR(255) NOT NULL,
+    LastName VARCHAR(255) NOT NULL,
     Gender ENUM('Male', 'Female', 'Nonbinary') NOT NULL,
     Age INT,
     BibNumber INT NOT NULL,

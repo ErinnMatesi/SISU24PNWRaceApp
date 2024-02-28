@@ -10,22 +10,22 @@ const CheckInForm = () => {
   const [confirmationMessage, setConfirmationMessage] = useState('');
 
   // Fetch trail details when racerDetails are updated
-useEffect(() => {
-    const fetchTrailDetails = async () => {
-        if (!racerDetails) return;
-        try {
-            const response = await fetch(`${process.env.REACT_APP_API_URL}/raceEntries/latest/${racerDetails.id}`);
-            const data = await response.json();
-            // Directly use data since it already contains trail and points information
-            setTrailDetails(data); // Adjusted to directly use `data`
-        } catch (error) {
-            console.error('Error fetching trail details:', error);
-            setTrailDetails(null);
-        }
-    };
-    
-    fetchTrailDetails();
-}, [racerDetails]);
+    useEffect(() => {
+        const fetchTrailDetails = async () => {
+            if (!racerDetails) return;
+            try {
+                const response = await fetch(`${process.env.REACT_APP_API_URL}/raceEntries/latest/${racerDetails.id}`);
+                const data = await response.json();
+                // Directly use data since it already contains trail and points information
+                setTrailDetails(data); // Adjusted to directly use `data`
+            } catch (error) {
+                console.error('Error fetching trail details:', error);
+                setTrailDetails(null);
+            }
+        };
+        
+        fetchTrailDetails();
+    }, [racerDetails]);
 
   const handleRacerSelected = (data) => {
       setRacerDetails(data);
@@ -38,11 +38,11 @@ useEffect(() => {
           return;
       }
 
-      let pointsEarned = 0;
+      let pointsEarned = trailDetails.BasePoints;
       if (completionStatus === 'Ping Pong Ball' && trailDetails) {
-          pointsEarned = trailDetails.FirstTenPoints;
+          pointsEarned += trailDetails.FirstTenPoints;
       } else if (completionStatus === 'Crystal' && trailDetails) {
-          pointsEarned = trailDetails.SecondTenPoints;
+          pointsEarned += trailDetails.SecondTenPoints;
       }
 
       const raceEntryData = {
