@@ -19,13 +19,23 @@ const ActiveRunnerList = () => {
     }, []);
 
     return (
-        <ul className="active-runner-list">
-            {activeRunners.map((runner, index) => (
-                <li key={index}>
-                    {runner.firstName} {runner.lastName} - Started at: {new Date(runner.startTime).toLocaleTimeString()}
-                </li>
-            ))}
-        </ul>
+        <div>
+            <h2>Currently On Trail</h2>
+            <div className="active-runner-list">
+                <div className="header-row">
+                    <div className="header">Name</div>
+                    <div className="header">Trail</div>
+                    <div className="header">Timeout</div>
+                </div>
+                {activeRunners.map((runner, index) => (
+                    <div key={index} className="runner-row">
+                        <div>{runner.firstName} {runner.lastName}</div>
+                        <div>{runner.trailName}</div>
+                        <div>{new Date(runner.startTime).toLocaleTimeString()}</div>
+                    </div>
+                ))}
+            </div>
+        </div>
     );
 };
 
