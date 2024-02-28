@@ -46,7 +46,10 @@ const CheckOutForm = () => {
         }
 
           const responseData = await response.json();
-          setConfirmationMessage('Check out successful! Race entry  created.');
+
+          // Find the selected trail's name from the trails array using trailId
+          const selectedTrail = trails.find(trail => trail.id === trailId).name;
+          setConfirmationMessage(`${racerDetails.firstName} checked out on ${selectedTrail} at ${startTime}.`);
           console.log('Race entry created:', responseData); // For    debugging, can be removed
         } catch (error) {
           console.error('Failed to check out:', error);
@@ -82,5 +85,3 @@ const CheckOutForm = () => {
 };
 
 export default CheckOutForm;
-
-

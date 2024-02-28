@@ -64,7 +64,7 @@ const CheckInForm = () => {
           setConfirmationMessage('Check-in successful!');
       } catch (error) {
           console.error('Check-in failed:', error);
-          setConfirmationMessage('Failed to check in. Please try again.');
+          setConfirmationMessage(`${racerDetails.firstName} completed ${trailDetails.TrailName} earning ${pointsEarned} points!`);
       }
   };
 
