@@ -1,4 +1,4 @@
-const mysql = require('mysql');
+const mysql = require('mysql2');
 
 // Load environment variables
 require('dotenv').config();
@@ -12,7 +12,7 @@ const dbConfig = {
 };
 
 // Create a MySQL pool
-const pool = mysql.createPool(dbConfig);
+const pool = mysql.createPool(dbConfig).promise();
 
 // Export the pool
 module.exports = pool;

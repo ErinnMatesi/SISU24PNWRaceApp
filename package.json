@@ -5,13 +5,14 @@
     "dotenv": "^16.4.1",
     "express": "^4.18.2",
     "morgan": "^1.10.0",
-    "mysql": "^2.18.1"
+    "mysql": "^2.18.1",
+    "mysql2": "^3.9.2"
   },
   "devDependencies": {
     "nodemon": "^3.0.3"
   },
   "scripts": {
-    "start": "node src/app.js",
-    "dev": "nodemon src/app.js"
+    "start": "node server/app.js",
+    "dev": "nodemon server/app.js"
   }
 }

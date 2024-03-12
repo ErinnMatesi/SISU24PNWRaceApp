@@ -54,15 +54,15 @@ CREATE TABLE IF NOT EXISTS BonusObjectives (
     FOREIGN KEY (AssociatedTrailID) REFERENCES Trails(TrailID)
 );
 
--- Create Race Results Table
-CREATE TABLE IF NOT EXISTS RaceResults (
-    ResultID INT AUTO_INCREMENT PRIMARY KEY,
-    RacerTeamID INT NOT NULL,
-    TotalMilesRan DECIMAL(5,2),
-    TotalElevationGained INT,
-    TotalPoints INT,
-    Division ENUM('100 milers', '24hr individual', '24hr team') NOT NULL,
-    AveragePace DECIMAL(5,2),
-    FOREIGN KEY (RacerTeamID) REFERENCES Racers(RacerID),
-    FOREIGN KEY (RacerTeamID) REFERENCES Teams(TeamID)
-);
+-- -- Will use queries instead of table, retaining for reference
+-- CREATE TABLE IF NOT EXISTS RaceResults (
+--     ResultID INT AUTO_INCREMENT PRIMARY KEY,
+--     RacerTeamID INT NOT NULL,
+--     TotalMilesRan DECIMAL(5,2),
+--     TotalElevationGained INT,
+--     TotalPoints INT,
+--     Division ENUM('100 milers', '24hr individual', '24hr team') NOT NULL,
+--     AveragePace DECIMAL(5,2),
+--     FOREIGN KEY (RacerTeamID) REFERENCES Racers(RacerID),
+--     FOREIGN KEY (RacerTeamID) REFERENCES Teams(TeamID)
+-- );
