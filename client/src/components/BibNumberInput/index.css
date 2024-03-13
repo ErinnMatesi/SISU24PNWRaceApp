@@ -1,12 +1,15 @@
-.bib-number-form {
-  margin: 20px;
-  padding: 20px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
+.bib-number-input {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
-.bib-number-form label {
-  margin-right: 10px;
+
+.bib-number-input label,
+.bib-number-input input,
+.bib-number-input button {
+  margin-bottom: 10px;
 }
-.bib-number-form input {
-  margin-right: 10px;
+
+.bib-number-input button {
+  cursor: pointer;
 }

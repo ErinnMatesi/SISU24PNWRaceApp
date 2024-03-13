@@ -55,21 +55,34 @@ router.get('/latest/:racerId', async (req, res) => {
 });
 
 // POST request to add a new race entry
-router.post('/', (req, res) => {
+router.post('/', async (req, res) => {
+    console.log('Received race entry data:', req.body);
     const { racerId, trailId, startTime, endTime, pointsEarned, bonusPointsEarned } = req.body;
+
     if (!racerId || !trailId) {
         return res.status(400).json({ message: 'Missing required fields' });
     }
 
     const insertQuery = 'INSERT INTO RaceEntries (RacerID, TrailID, StartTime, EndTime, PointsEarned, BonusPointsEarned) VALUES (?, ?, ?, ?, ?, ?)';
-    pool.query(insertQuery, [racerId, trailId, startTime, endTime, pointsEarned, bonusPointsEarned], (error, results) => {
-        if (error) {
-            console.error('Error inserting data into database:', error);
-            return res.status(500).json({ message: 'Error adding race entry' });
-        }
+    
+    try {
+        console.log('Inserting race entry with data:', { racerId, trailId, startTime, endTime, pointsEarned, bonusPointsEarned });
+        
+        const [results] = await pool.query(insertQuery, [racerId, trailId, startTime, endTime, pointsEarned, bonusPointsEarned]);
+        
+        console.log('Race entry added successfully', results);
         res.status(201).json({ message: 'Race entry added successfully', entryId: results.insertId });
-    });
+    } catch (error) {
+        console.error('Error inserting data into database:', error);
+        res.status(500).json({ message: 'Error adding race entry' });
+    }
 });
+
+// router.post('/', (req, res) => {
+//     console.log('Received race entry data:', req.body);
+//     res.status(200).json({ message: 'Test response' });
+// });
+
 
 // PUT request to update a race entry with completion status
 router.put('/checkin/:entryId', async (req, res) => {

@@ -13,15 +13,17 @@ router.get('/', (req, res) => {
     });
 });
 
-// New route for fetching racer details by bib number
+// fetching racer details by bib number
 router.get('/:bibNumber', async (req, res) => {
     const { bibNumber } = req.params;
     try {
-        const racerDetails = await PullRacerByBib(bibNumber);
-        if (!racerDetails) {
-            return res.status(404).send('Racer not found');
+        const [rows, fields] = await pool.query('SELECT * FROM Racers WHERE BibNumber = ?', [bibNumber]);
+        if (rows.length > 0) {
+            const racerDetails = rows[0];
+            res.json(racerDetails);
+        } else {
+            res.status(404).send('Racer not found');
         }
-        res.json(racerDetails);
     } catch (error) {
         console.error('Error fetching racer details:', error);
         res.status(500).send('Internal Server Error');

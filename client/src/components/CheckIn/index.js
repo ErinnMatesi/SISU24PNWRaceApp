@@ -14,7 +14,7 @@ const CheckInForm = () => {
         const fetchTrailDetails = async () => {
             if (!racerDetails) return;
             try {
-                const response = await fetch(`${process.env.REACT_APP_API_URL}/raceEntries/latest/${racerDetails.id}`);
+                const response = await fetch(`${process.env.REACT_APP_API_URL}/raceEntry/latest/${racerDetails.id}`);
                 const data = await response.json();
                 // Directly use data since it already contains trail and points information
                 setTrailDetails(data); // Adjusted to directly use `data`
@@ -51,7 +51,7 @@ const CheckInForm = () => {
       };
 
       try {
-          const response = await fetch(`${process.env.REACT_APP_API_URL}/raceEntries/checkin/${racerDetails.id}`, {
+          const response = await fetch(`${process.env.REACT_APP_API_URL}/raceEntry/checkin/${racerDetails.id}`, {
               method: 'PATCH', // Use PATCH for partial updates
               headers: {
                   'Content-Type': 'application/json',
@@ -64,7 +64,7 @@ const CheckInForm = () => {
           setConfirmationMessage('Check-in successful!');
       } catch (error) {
           console.error('Check-in failed:', error);
-          setConfirmationMessage(`${racerDetails.firstName} completed ${trailDetails.TrailName} earning ${pointsEarned} points!`);
+          setConfirmationMessage(`${racerDetails.FirstName} completed ${trailDetails.TrailName} earning ${pointsEarned} points!`);
       }
   };
 
