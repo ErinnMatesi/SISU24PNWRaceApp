@@ -11,10 +11,11 @@ const CheckInForm = () => {
 
   // Fetch trail details when racerDetails are updated
     useEffect(() => {
+        // console.log(racerDetails);
         const fetchTrailDetails = async () => {
             if (!racerDetails) return;
             try {
-                const response = await fetch(`${process.env.REACT_APP_API_URL}/raceEntry/latest/${racerDetails.id}`);
+                const response = await fetch(`${process.env.REACT_APP_API_URL}/raceEntry/latest/${racerDetails.RacerID}`);
                 const data = await response.json();
                 // Directly use data since it already contains trail and points information
                 setTrailDetails(data); // Adjusted to directly use `data`
@@ -27,12 +28,15 @@ const CheckInForm = () => {
         fetchTrailDetails();
     }, [racerDetails]);
 
-  const handleRacerSelected = (data) => {
-      setRacerDetails(data);
+  const handleRacerSelected = (racer) => {
+      console.log("Racer selected:", racer);
+      setRacerDetails(racer);
   };
 
   const handleSubmit = async (e) => {
       e.preventDefault();
+      console.log("Current racerDetails:", racerDetails);
+
       if (!trailDetails || !racerDetails) {
           setConfirmationMessage('Racer or trail information is missing.');
           return;
@@ -51,7 +55,7 @@ const CheckInForm = () => {
       };
 
       try {
-          const response = await fetch(`${process.env.REACT_APP_API_URL}/raceEntry/checkin/${racerDetails.id}`, {
+          const response = await fetch(`${process.env.REACT_APP_API_URL}/raceEntry/checkin/${racerDetails.RacerID}`, {
               method: 'PATCH', // Use PATCH for partial updates
               headers: {
                   'Content-Type': 'application/json',
@@ -61,10 +65,10 @@ const CheckInForm = () => {
 
           if (!response.ok) throw new Error('Check-in failed.');
 
-          setConfirmationMessage('Check-in successful!');
+          setConfirmationMessage(`${racerDetails.FirstName} completed ${trailDetails.TrailName} earning ${pointsEarned} points!`);
       } catch (error) {
           console.error('Check-in failed:', error);
-          setConfirmationMessage(`${racerDetails.FirstName} completed ${trailDetails.TrailName} earning ${pointsEarned} points!`);
+          setConfirmationMessage('Check-in failed:');
       }
   };
 

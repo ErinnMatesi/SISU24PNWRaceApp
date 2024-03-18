@@ -31,20 +31,21 @@ router.get('/active', async (req, res) => {
 });
 
 // GET request for the latest race entry of a specific racer
-router.get('/latest/:racerId', async (req, res) => {
-    const { racerId } = req.params;
+router.get('/latest/:racerID', async (req, res) => {
+    const { racerID } = req.params;
     try {
         const query = `
-            SELECT RaceEntries.*, Trails.BasePoints, Trails.FirstTenPoints, Trails.SecondTenPoints, Trails.Name as TrailName
+            SELECT RaceEntries.*, Trails.BasePoints, Trails.FirstTenPoints, Trails.SecondTenPoints, Trails.TrailName as TrailName
             FROM RaceEntries
-            JOIN Trails ON RaceEntries.TrailID = Trails.ID
+            JOIN Trails ON RaceEntries.TrailID = Trails.TrailID
             WHERE RaceEntries.RacerID = ?
             ORDER BY RaceEntries.StartTime DESC
             LIMIT 1;
         `;
-        const results = await pool.query(query, [racerId]);
+        const results = await pool.query(query, [racerID]);
         if (results.length > 0) {
             res.json(results[0]);
+            console.log("Race Entry data",  results[0])
         } else {
             res.status(404).json({ message: 'No race entries found for the specified racer.' });
         }
@@ -84,16 +85,17 @@ router.post('/', async (req, res) => {
 // });
 
 
-// PUT request to update a race entry with completion status
-router.put('/checkin/:entryId', async (req, res) => {
+// PATCH request to update a race entry with completion status
+router.patch('/checkin/:entryId', async (req, res) => {
     const { entryId } = req.params;
-    const { endTime, pointsEarned } = req.body; // Directly using pointsEarned sent from the frontend
+    const { endTime, pointsEarned } = req.body;
 
     try {
+        // Update the race entry with endTime and pointsEarned
         const updateQuery = 'UPDATE RaceEntries SET EndTime = ?, PointsEarned = ? WHERE EntryID = ?';
-        const results = await pool.query(updateQuery, [endTime, pointsEarned, entryId]);
+        const [updateResults] = await pool.query(updateQuery, [endTime, pointsEarned, entryId]);
 
-        if (results.affectedRows === 0) {
+        if (updateResults.affectedRows === 0) {
             // If no rows were affected, it means the entryId didn't match any records
             return res.status(404).json({ message: 'Race entry not found' });
         }
