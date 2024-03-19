@@ -8,17 +8,19 @@ const CheckInForm = () => {
   const [endTime, setEndTime] = useState(new Date().toISOString().slice(0, 16));
   const [completionStatus, setCompletionStatus] = useState('');
   const [confirmationMessage, setConfirmationMessage] = useState('');
+  const [entryId, setEntryId] = useState(null);
 
   // Fetch trail details when racerDetails are updated
     useEffect(() => {
-        // console.log(racerDetails);
         const fetchTrailDetails = async () => {
             if (!racerDetails) return;
             try {
                 const response = await fetch(`${process.env.REACT_APP_API_URL}/raceEntry/latest/${racerDetails.RacerID}`);
                 const data = await response.json();
-                // Directly use data since it already contains trail and points information
-                setTrailDetails(data); // Adjusted to directly use `data`
+                setTrailDetails(data);
+                const entryId = data.EntryID;
+                setEntryId(entryId);
+                console.log('Fetched trail details:', data);
             } catch (error) {
                 console.error('Error fetching trail details:', error);
                 setTrailDetails(null);
@@ -27,6 +29,11 @@ const CheckInForm = () => {
         
         fetchTrailDetails();
     }, [racerDetails]);
+
+    useEffect(() => {
+        console.log('Updated trailDetails:', trailDetails);
+      }, [trailDetails]);
+      
 
   const handleRacerSelected = (racer) => {
       console.log("Racer selected:", racer);
@@ -42,6 +49,12 @@ const CheckInForm = () => {
           return;
       }
 
+    //   FOR DEBUGGING
+    if (trailDetails && 'BasePoints' in trailDetails) {
+        console.log('trailDetails w/ basePoints??', trailDetails.BasePoints)
+    }
+    
+
       let pointsEarned = trailDetails.BasePoints;
       if (completionStatus === 'Ping Pong Ball' && trailDetails) {
           pointsEarned += trailDetails.FirstTenPoints;
@@ -49,13 +62,23 @@ const CheckInForm = () => {
           pointsEarned += trailDetails.SecondTenPoints;
       }
 
+    //   for debugging
+    console.log('BasePoints:', trailDetails.BasePoints, 'FirstTenPoints:', trailDetails.FirstTenPoints, 'SecondTenPoints:', trailDetails.SecondTenPoints);
+    console.log('Pre-parse Distance:', trailDetails.Distance, 'ElevationGain:', trailDetails.ElevationGain);
+    console.log('Parsed mileage:', parseFloat(trailDetails.Distance), 'Parsed elevationGain:', parseInt(trailDetails.ElevationGain));
       const raceEntryData = {
-          endTime,
-          pointsEarned, 
+        endTime,
+        pointsEarned,
+        mileage: parseFloat(trailDetails.Distance),
+        elevationGain: parseInt(trailDetails.ElevationGain),
       };
+// for debugging
+      console.log('raceEntryData:', raceEntryData);
 
       try {
-          const response = await fetch(`${process.env.REACT_APP_API_URL}/raceEntry/checkin/${racerDetails.RacerID}`, {
+        // for debugging
+        console.log('Racer details at submit:', racerDetails);
+          const response = await fetch(`${process.env.REACT_APP_API_URL}/raceEntry/checkin/${entryId}`, {
               method: 'PATCH', // Use PATCH for partial updates
               headers: {
                   'Content-Type': 'application/json',
@@ -76,7 +99,7 @@ const CheckInForm = () => {
       <div>
           <form className="checkin-form" onSubmit={handleSubmit}>
               <BibNumberInput onRacerSelected={handleRacerSelected} />
-              {trailDetails && <p>Checking in from: {trailDetails.name}</p>}
+              {trailDetails && <p>Checking in from: {trailDetails.TrailName}</p>}
               <div className="form-group">
                   <label>End Time:</label>
                   <input type="datetime-local" value={endTime} onChange={(e) => setEndTime(e.target.value)} />
