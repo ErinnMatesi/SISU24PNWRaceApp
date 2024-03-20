@@ -36,12 +36,6 @@ const CheckInForm = () => {
         fetchTrailDetails();
     }, [racerDetails]);
 
-    // for debugging
-    useEffect(() => {
-        console.log('Updated trailDetails:', trailDetails);
-      }, [trailDetails]);
-      
-
   const handleRacerSelected = (racer) => {
       console.log("Racer selected:", racer);
       setRacerDetails(racer);
@@ -55,11 +49,6 @@ const CheckInForm = () => {
           setConfirmationMessage('Racer or trail information is missing.');
           return;
       }
-
-    //   FOR DEBUGGING
-    if (trailDetails && 'BasePoints' in trailDetails) {
-        console.log('trailDetails w/ basePoints??', trailDetails.BasePoints)
-    }
     
 
       let pointsEarned = trailDetails.BasePoints;
@@ -70,9 +59,9 @@ const CheckInForm = () => {
       }
 
     //   for debugging
-    console.log('BasePoints:', trailDetails.BasePoints, 'FirstTenPoints:', trailDetails.FirstTenPoints, 'SecondTenPoints:', trailDetails.SecondTenPoints);
-    console.log('Pre-parse Distance:', trailDetails.Distance, 'ElevationGain:', trailDetails.ElevationGain);
-    console.log('Parsed mileage:', parseFloat(trailDetails.Distance), 'Parsed elevationGain:', parseInt(trailDetails.ElevationGain));
+    // console.log('BasePoints:', trailDetails.BasePoints, 'FirstTenPoints:', trailDetails.FirstTenPoints, 'SecondTenPoints:', trailDetails.SecondTenPoints);
+    // console.log('Pre-parse Distance:', trailDetails.Distance, 'ElevationGain:', trailDetails.ElevationGain);
+    // console.log('Parsed mileage:', parseFloat(trailDetails.Distance), 'Parsed elevationGain:', parseInt(trailDetails.ElevationGain));
       const raceEntryData = {
         endTime,
         pointsEarned,
@@ -80,7 +69,7 @@ const CheckInForm = () => {
         elevationGain: parseInt(trailDetails.ElevationGain),
       };
 // for debugging
-      console.log('raceEntryData:', raceEntryData);
+    //   console.log('raceEntryData:', raceEntryData);
 
       try {
         // for debugging
@@ -96,6 +85,7 @@ const CheckInForm = () => {
           if (!response.ok) throw new Error('Check-in failed.');
 
           setConfirmationMessage(`${racerDetails.FirstName} completed ${trailDetails.TrailName} earning ${pointsEarned} points!`);
+          setRacerDetails(null);
       } catch (error) {
           console.error('Check-in failed:', error);
           setConfirmationMessage('Check-in failed:');

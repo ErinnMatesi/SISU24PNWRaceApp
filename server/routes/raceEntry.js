@@ -93,35 +93,47 @@ router.patch('/checkin/:entryId', async (req, res) => {
 console.log('req.body to see if mileage, elevation gain and points have made it', req.body);
 
     try {
-        const [entry] = await pool.query('SELECT RacerID FROM RaceEntries WHERE EntryID = ?', [entryId]);
+        const [entry] = await pool.query('SELECT RacerID, TrailID FROM RaceEntries WHERE EntryID = ?', [entryId]);
         if (entry.length === 0) {
             return res.status(404).json({ message: 'Race entry not found' });
         }
         const racerId = entry[0].RacerID;
+        const trailId = entry[0].TrailID;
 
-        // Step 1: Update RaceEntries Table
+        // Insert current race entry into RacerTrailMap if not already present
+        await pool.query('INSERT IGNORE INTO RacerTrailMap (RacerID, TrailID) VALUES (?, ?)', [racerId, trailId]);
+
+        // Count the number of unique trails completed by the racer
+        const [uniqueTrailsCount] = await pool.query('SELECT COUNT(DISTINCT TrailID) AS uniqueCount FROM RacerTrailMap WHERE RacerID = ?', [racerId]);
+        let bonusPoints = 0;
+        if (uniqueTrailsCount[0].uniqueCount >= 4) bonusPoints += 5;
+        if (uniqueTrailsCount[0].uniqueCount >= 5) bonusPoints += 2;
+        if (uniqueTrailsCount[0].uniqueCount == 6) bonusPoints += 3;
+
+        // Update RaceEntries Table
+        const totalPointsEarned = pointsEarned + bonusPoints;
         const updateQuery = 'UPDATE RaceEntries SET EndTime = ?, PointsEarned = ? WHERE EntryID = ?';
-        const [updateResults] = await pool.query(updateQuery, [endTime, pointsEarned, entryId]);
+        const [updateResults] = await pool.query(updateQuery, [endTime, totalPointsEarned, entryId]);
 
         if (updateResults.affectedRows === 0) {
             // If no rows were affected, it means the entryId didn't match any records
             return res.status(404).json({ message: 'Race entry not found' });
         }
 
-        // Step 2: Fetch Current Totals
+        // Fetch Current Totals
         const [currentTotals] = await pool.query('SELECT TotalMiles, TotalElevationGain, TotalPoints FROM Racers WHERE RacerID = ?', [racerId]);
 
-        // for debugging
-        console.log(`Current totals: Miles=${currentTotals[0].TotalMiles}, ElevationGain=${currentTotals[0].TotalElevationGain}, Points=${currentTotals[0].TotalPoints}`);
-        console.log(`Adding: Miles=${mileage}, ElevationGain=${elevationGain}, Points=${pointsEarned}`);
+        // // for debugging
+        // console.log(`Current totals: Miles=${currentTotals[0].TotalMiles}, ElevationGain=${currentTotals[0].TotalElevationGain}, Points=${currentTotals[0].TotalPoints}`);
+        // console.log(`Adding: Miles=${mileage}, ElevationGain=${elevationGain}, Points=${pointsEarned}`);
         
         // Step 3: Calculate New Totals
         const newMiles = parseFloat(currentTotals[0].TotalMiles || 0) + parseFloat(mileage);
         const newElevationGain = parseInt(currentTotals[0].TotalElevationGain || 0, 10) + parseInt(elevationGain, 10);
-        const newPoints = (currentTotals[0].TotalPoints || 0) + (pointsEarned || 0);
+        const newPoints = (currentTotals[0].TotalPoints || 0) + (totalPointsEarned || 0);
         
-        // For debugging
-        console.log(`New totals: Miles=${newMiles}, ElevationGain=${newElevationGain}, Points=${newPoints}`);
+        // // For debugging
+        // console.log(`New totals: Miles=${newMiles}, ElevationGain=${newElevationGain}, Points=${newPoints}`);
 
 
         // Step 4: Update Racer's Totals

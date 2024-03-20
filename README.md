@@ -7,12 +7,13 @@ Live race logging for a 24 hour trail race event! Check racers in and out on tra
 * [Installation](#installation)
 * [Usage](#usage)
 * [Technologies](#technologies)
+* [Screenshots](#screenshots)
 * [Testing](#testing)
 * [Questions](#questions)
 * [License](#license)
 
 ## Installation
-Currently set up for offline use due to lack of internet at race venue, database is hosted locally so no installation and sharing at this moment. If motivated, use the db schema to set up your own local database and then install all dependencies, start the server and the react app and begin tracking racers!
+Currently set up for offline use due to lack of internet at race venue, database is hosted locally so no installation and sharing at this moment. If motivated, use the db_seed file to set up your own local database and then install all dependencies, start the server and the react app and begin tracking racers!
 
 ## Usage
 Start the server and react app, navigate to the Main page to track racers in and out on trails. Pull up the Leaderboard page on a separate display to show to racers and crew. When checking in, checking out, or adding bonus points for a racer, start by typing their bib number and click "submit", then select the appropriate trail, bonus objective or bonus point object (ping pong ball or crystal) and click the lower "submit". 

@@ -5,7 +5,8 @@ USE RaceEventApp;
 -- Create Teams Table
 CREATE TABLE IF NOT EXISTS Teams (
     TeamID INT AUTO_INCREMENT PRIMARY KEY,
-    TeamName VARCHAR(255) NOT NULL
+    TeamName VARCHAR(255) NOT NULL,
+    TotalPoints INT,
 );
 
 -- Create Trails Table
@@ -28,6 +29,9 @@ CREATE TABLE IF NOT EXISTS Racers (
     Age INT,
     BibNumber INT NOT NULL,
     Division ENUM('100 milers', '24hr individual', '24hr team') NOT NULL,
+    TotalMilesRan DECIMAL(5,2),
+    TotalElevationGained INT,
+    TotalPoints INT,
     TeamID INT,
     FOREIGN KEY (TeamID) REFERENCES Teams(TeamID)
 );

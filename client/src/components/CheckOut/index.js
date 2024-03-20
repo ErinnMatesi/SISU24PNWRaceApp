@@ -25,7 +25,7 @@ const CheckOutForm = () => {
   const handleSubmit = async (e) => {
     console.log("CheckOut handleSubmit called");
       e.preventDefault();
-      console.log("Current racerDetails:", racerDetails); // For    debugging, can be removed
+      // console.log("Current racerDetails:", racerDetails); // For    debugging, can be removed
       const racerId = racerDetails?.RacerID; 
       const raceEntryData = {
           racerId, 
@@ -33,7 +33,7 @@ const CheckOutForm = () => {
           startTime,
       };
       
-      console.log("Submitting raceEntryData:", raceEntryData); // For    debugging, can be removed
+      // console.log("Submitting raceEntryData:", raceEntryData); // For    debugging, can be removed
       try {
         // Perform a POST request to your backend endpoint
         const response = await fetch(`${process.env.REACT_APP_API_URL}/raceEntry`, {
@@ -55,6 +55,7 @@ const CheckOutForm = () => {
           const selectedTrailName = selectedTrail ? selectedTrail.name : 'Unknown Trail';
           setConfirmationMessage(`${racerDetails.FirstName} checked out on ${selectedTrailName} at ${startTime}.`);
           console.log('Race entry created:', responseData); // For    debugging, can be removed
+          setRacerDetails(null);
         } catch (error) {
           console.error('Failed to check out:', error);
           setConfirmationMessage('Failed to check out. Please try again.');
