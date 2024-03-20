@@ -38,14 +38,14 @@ router.get('/latest/:RacerID', async (req, res) => {
         SELECT RaceEntries.*, Trails.BasePoints, Trails.FirstTenPoints, Trails.SecondTenPoints, Trails.TrailName, Trails.Distance, Trails.ElevationGain
         FROM RaceEntries
         JOIN Trails ON RaceEntries.TrailID = Trails.TrailID
-        WHERE RaceEntries.RacerID = ?
+        WHERE RaceEntries.RacerID = ? AND RaceEntries.EndTime IS NULL
         ORDER BY RaceEntries.StartTime DESC
         LIMIT 1;
         `;
         const results = await pool.query(query, [RacerID]);
         if (results.length > 0) {
             res.json(results[0]);
-            console.log("Race Entry data",  results[0])
+            console.log("Latest/:RacerID data",  results[0])
         } else {
             res.status(404).json({ message: 'No race entries found for the specified racer.' });
         }
@@ -116,8 +116,8 @@ console.log('req.body to see if mileage, elevation gain and points have made it'
         console.log(`Adding: Miles=${mileage}, ElevationGain=${elevationGain}, Points=${pointsEarned}`);
         
         // Step 3: Calculate New Totals
-        const newMiles = (currentTotals[0].TotalMiles || 0) + (mileage || 0);
-        const newElevationGain = (currentTotals[0].TotalElevationGain || 0) + (elevationGain || 0);
+        const newMiles = parseFloat(currentTotals[0].TotalMiles || 0) + parseFloat(mileage);
+        const newElevationGain = parseInt(currentTotals[0].TotalElevationGain || 0, 10) + parseInt(elevationGain, 10);
         const newPoints = (currentTotals[0].TotalPoints || 0) + (pointsEarned || 0);
         
         // For debugging

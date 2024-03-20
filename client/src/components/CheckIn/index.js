@@ -17,19 +17,26 @@ const CheckInForm = () => {
             try {
                 const response = await fetch(`${process.env.REACT_APP_API_URL}/raceEntry/latest/${racerDetails.RacerID}`);
                 const data = await response.json();
-                setTrailDetails(data);
-                const entryId = data.EntryID;
-                setEntryId(entryId);
-                console.log('Fetched trail details:', data);
+                if (data.length > 0) {
+                    setTrailDetails(data[0]);
+                    const entryId = data[0].EntryID;
+                    setEntryId(entryId);
+                    console.log('Fetched trail details:', data[0]);
+                } else {
+                    setTrailDetails(null);
+                    setEntryId(null);
+                }
             } catch (error) {
                 console.error('Error fetching trail details:', error);
                 setTrailDetails(null);
+                setEntryId(null);
             }
         };
         
         fetchTrailDetails();
     }, [racerDetails]);
 
+    // for debugging
     useEffect(() => {
         console.log('Updated trailDetails:', trailDetails);
       }, [trailDetails]);
