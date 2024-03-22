@@ -65,6 +65,7 @@ const CheckOutForm = () => {
 
     return (
       <>
+      <h2>Check Out Onto Trail</h2>
         <form className="checkout-form" onSubmit={handleSubmit}>
       <BibNumberInput onRacerSelected={handleRacerSelected} />
       <div className="form-group">

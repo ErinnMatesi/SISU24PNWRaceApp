@@ -1,0 +1,48 @@
+.bonus-objective-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 20px;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  /* background-color: #f9f9f9; */
+}
+
+.bonus-objective-form form {
+  width: 100%;
+  max-width: 400px;
+}
+
+.bonus-objective-form label {
+  margin-top: 10px;
+  font-weight: bold;
+}
+
+.bonus-objective-form select {
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: white;
+}
+
+.bonus-objective-form button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  color: white;
+  background-color: #007bff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.bonus-objective-form button:hover {
+  background-color: #0056b3;
+}
+
+.confirmation-message {
+  margin-top: 15px;
+  color: green;
+}

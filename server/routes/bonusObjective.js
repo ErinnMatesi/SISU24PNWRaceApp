@@ -3,14 +3,14 @@ const router = express.Router();
 const pool = require('../config/dbConfig'); // Ensure the path to dbConfig is correct
 
 // GET request for list of bonus objectives
-router.get('/', (req, res) => {
-    pool.query('SELECT * FROM BonusObjectives', (error, results) => {
-        if (error) {
-            console.error('Error fetching data from database:', error);
-            return res.status(500).json({ message: 'Error retrieving bonus objectives' });
-        }
-        res.status(200).json(results);
-    });
+router.get('/', async (req, res) => {
+    try {
+        const [results] = await pool.query('SELECT ObjectiveID AS id, Description AS name, BonusPoints AS points FROM BonusObjectives');
+        res.json(results);
+      } catch (error) {
+        console.error('Error fetching bonus objectives:', error);
+        res.status(500).send('Internal Server Error');
+      }
 });
 
 // POST request to add a new bonus objective

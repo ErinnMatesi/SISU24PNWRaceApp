@@ -94,6 +94,7 @@ const CheckInForm = () => {
 
   return (
       <div>
+        <h2>Check In From Trail</h2>
           <form className="checkin-form" onSubmit={handleSubmit}>
               <BibNumberInput onRacerSelected={handleRacerSelected} />
               {trailDetails && <p>Checking in from: {trailDetails.TrailName}</p>}
