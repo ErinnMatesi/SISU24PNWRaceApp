@@ -53,7 +53,6 @@ router.post('/', (req, res) => {
   });
 });
 
-
 // PUT request to update a racer
 router.put('/:racerId', (req, res) => {
   const { racerId } = req.params;
