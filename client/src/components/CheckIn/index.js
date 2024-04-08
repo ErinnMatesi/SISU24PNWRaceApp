@@ -56,20 +56,17 @@ const CheckInForm = () => {
           pointsEarned += trailDetails.FirstTenPoints;
       } else if (completionStatus === 'Crystal' && trailDetails) {
           pointsEarned += trailDetails.SecondTenPoints;
+      } else if (completionStatus === 'None') {
+        // If "None" is selected, do not add any additional points
+        pointsEarned = trailDetails.BasePoints;
       }
 
-    //   for debugging
-    // console.log('BasePoints:', trailDetails.BasePoints, 'FirstTenPoints:', trailDetails.FirstTenPoints, 'SecondTenPoints:', trailDetails.SecondTenPoints);
-    // console.log('Pre-parse Distance:', trailDetails.Distance, 'ElevationGain:', trailDetails.ElevationGain);
-    // console.log('Parsed mileage:', parseFloat(trailDetails.Distance), 'Parsed elevationGain:', parseInt(trailDetails.ElevationGain));
       const raceEntryData = {
         endTime,
         pointsEarned,
         mileage: parseFloat(trailDetails.Distance),
         elevationGain: parseInt(trailDetails.ElevationGain),
       };
-// for debugging
-    //   console.log('raceEntryData:', raceEntryData);
 
       try {
         // for debugging
@@ -86,6 +83,7 @@ const CheckInForm = () => {
 
           setConfirmationMessage(`${racerDetails.FirstName} completed ${trailDetails.TrailName} earning ${pointsEarned} points!`);
           setRacerDetails(null);
+          setCompletionStatus('');
       } catch (error) {
           console.error('Check-in failed:', error);
           setConfirmationMessage('Check-in failed:');
@@ -103,11 +101,12 @@ const CheckInForm = () => {
                   <input type="datetime-local" value={endTime} onChange={(e) => setEndTime(e.target.value)} />
               </div>
               <div className="form-group">
-                  <label>Completion Status:</label>
+                  <label>Ping Pong Ball or Crystal?</label>
                   <select value={completionStatus} onChange={(e) => setCompletionStatus(e.target.value)}>
                       <option value="">Select Status</option>
                       <option value="Ping Pong Ball">Ping Pong Ball</option>
                       <option value="Crystal">Crystal</option>
+                      <option value="None">None</option>
                   </select>
               </div>
               <button type="submit">Check In</button>
