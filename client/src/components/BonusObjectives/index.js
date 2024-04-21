@@ -2,6 +2,12 @@ import React, { useState, useEffect } from 'react';
 import BibNumberInput from '../BibNumberInput';
 import './index.css'; 
 
+function formatMySQLDate(date) {
+  const offset = date.getTimezoneOffset();
+  const adjustedDate = new Date(date.getTime() - (offset * 60 * 1000));
+  return adjustedDate.toISOString().split('T')[0] + ' ' + adjustedDate.toISOString().split('T')[1].slice(0, 8);
+}
+
 const BonusObjectiveForm = () => {
   const [racerDetails, setRacerDetails] = useState(null);
   const [bonusObjectives, setBonusObjectives] = useState([]);
@@ -11,7 +17,7 @@ const BonusObjectiveForm = () => {
   useEffect(() => {
     const fetchBonusObjectives = async () => {
       try {
-        const response = await fetch(`${process.env.REACT_APP_API_URL}/bonusObjectives`);
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/bonusObjective`);
         const data = await response.json();
         setBonusObjectives(data);
       } catch (error) {
@@ -40,15 +46,23 @@ const BonusObjectiveForm = () => {
       setConfirmationMessage('Invalid bonus objective selected.');
       return;
     }
+
+    const now = new Date();
+    const formattedStartTime = formatMySQLDate(now);
+    const formattedEndTime = formatMySQLDate(now);
   
     // Preparing the data for the new race entry with bonus points
     const newRaceEntryData = {
-      racerId: racerDetails.id, // Access the id property from racerDetails
+      racerId: racerDetails.RacerID,  // Make sure this is being correctly set when racer is selected
+      trailId: null, // No specific trail for bonus points
+      startTime: formattedStartTime,
+      endTime: formattedEndTime,
+      pointsEarned: 0,
       bonusPointsEarned: selectedObjectiveDetails.points,
     };
   
     try {
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/raceEntries`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/raceEntry`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -56,14 +70,17 @@ const BonusObjectiveForm = () => {
         body: JSON.stringify(newRaceEntryData),
       });
   
-      if (!response.ok) throw new Error('Failed to create new race entry with bonus points.');
+      if (!response.ok) {
+        const errorData = await response.json(); // Assuming server sends back an error message in JSON format
+        throw new Error('Failed to create new race entry with bonus points: ' + errorData.message);
+      }
   
-      setConfirmationMessage(`Bonus points successfully applied.`);
-      // Reset form fields if necessary
+      const responseData = await response.json();
+      setConfirmationMessage(`Bonus points successfully applied. Entry ID: ${responseData.entryId}`);
       setSelectedObjective('');
     } catch (error) {
       console.error('Error creating new race entry with bonus points:', error);
-      setConfirmationMessage('Failed to apply bonus points.');
+      setConfirmationMessage('Failed to apply bonus points. ' + error.message);
     }
   };
   

@@ -10,14 +10,14 @@ function App() {
       <nav>
         <ul>
           <li><Link to="/">Main</Link></li>
-          <li><Link to="/leaderboard">Leaderboard</Link></li>
-          <li><Link to="/edit">Edit</Link></li>
+          {/* <li><Link to="/leaderboard">Leaderboard</Link></li>
+          <li><Link to="/edit">Edit</Link></li> */}
         </ul>
       </nav>
       <Routes>
         <Route path="/" element={<MainPage />} />
-        <Route path="/leaderboard" element={<LeaderboardPage />} />
-        <Route path="/edit" element={<EditPage />} />
+        {/* <Route path="/leaderboard" element={<LeaderboardPage />} />
+        <Route path="/edit" element={<EditPage />} /> */}
       </Routes>
     </Router>
   );

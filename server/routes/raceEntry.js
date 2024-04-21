@@ -60,8 +60,8 @@ router.post('/', async (req, res) => {
     console.log('Received race entry data:', req.body);
     const { racerId, trailId, startTime, endTime, pointsEarned, bonusPointsEarned } = req.body;
 
-    if (!racerId || !trailId) {
-        return res.status(400).json({ message: 'Missing required fields' });
+    if (!racerId ) {
+        return res.status(400).json({ message: 'Missing required field: racerId' });
     }
 
     const insertQuery = 'INSERT INTO RaceEntries (RacerID, TrailID, StartTime, EndTime, PointsEarned, BonusPointsEarned) VALUES (?, ?, ?, ?, ?, ?)';
