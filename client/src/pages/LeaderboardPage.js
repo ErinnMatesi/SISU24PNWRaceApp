@@ -1,4 +1,5 @@
 import React from 'react';
+import './LeaderboardPage.css';
 import ActiveRunnerList from '../components/ActiveRunnerList';
 
 function LeaderboardPage() {

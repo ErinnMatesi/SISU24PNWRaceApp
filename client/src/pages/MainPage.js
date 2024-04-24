@@ -1,4 +1,5 @@
 import React from 'react';
+import './MainPage.css';
 import CheckInForm from '../components/CheckIn';
 import CheckOutForm from '../components/CheckOut';
 import BonusObjectivesForm from '../components/BonusObjectives';
