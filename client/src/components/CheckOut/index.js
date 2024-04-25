@@ -36,7 +36,7 @@ const CheckOutForm = () => {
       // console.log("Submitting raceEntryData:", raceEntryData); // For    debugging, can be removed
       try {
         // Perform a POST request to your backend endpoint
-        const response = await fetch(`${process.env.REACT_APP_API_URL}/raceEntry`, {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/raceEntry/checkout`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

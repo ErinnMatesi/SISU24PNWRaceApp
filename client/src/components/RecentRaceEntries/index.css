@@ -1,0 +1,35 @@
+.recent-entries-container {
+  margin: 20px;
+  padding: 15px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.recent-entries-header {
+  color: #333;
+  font-size: 20px;
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.recent-entries-list {
+  list-style-type: none;
+  padding: 0;
+}
+
+.recent-entries-list li {
+  padding: 10px;
+  border-bottom: 1px solid #e0e0e0;
+  color: #666;
+  font-size: 16px;
+}
+
+.recent-entries-list li:last-child {
+  border-bottom: none;
+}
+
+.recent-entries-list li:hover {
+  background-color: #eef9ff;
+  cursor: pointer;
+}

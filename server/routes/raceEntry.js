@@ -55,8 +55,33 @@ router.get('/latest/:RacerID', async (req, res) => {
     }
 });
 
+// GET request for most recent 5 race entries
+router.get('/recent', async (req, res) => {
+    try {
+        const [results] = await pool.query(`
+        SELECT e.EntryID, 
+            r.FirstName, 
+            r.LastName, 
+            r.BibNumber, 
+            t.TrailName, 
+            (e.PointsEarned IS NOT NULL OR e.BonusPointsEarned IS NOT NULL) AS HasPoints,
+            b.Description AS BonusObjectiveDescription
+        FROM RaceEntries e
+        LEFT JOIN Racers r ON e.RacerID = r.RacerID
+        LEFT JOIN Trails t ON e.TrailID = t.TrailID
+        LEFT JOIN BonusObjectives b ON e.BonusObjectiveID = b.ObjectiveID
+        ORDER BY e.EntryID DESC
+        LIMIT 5;
+        `);
+        res.json(results);
+    } catch ( error ) {
+        console.error('Error fetching recent race entries:', error);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
 // POST request to add a new CheckOut race entry
-router.post('/', async (req, res) => {
+router.post('/checkout', async (req, res) => {
     console.log('Received race entry data:', req.body);
     const { racerId, trailId, startTime, endTime, pointsEarned, bonusPointsEarned } = req.body;
 
@@ -79,18 +104,10 @@ router.post('/', async (req, res) => {
     }
 });
 
-router.post('/', (req, res) => {
-    console.log('Received race entry data:', req.body);
-    res.status(200).json({ message: 'Test response' });
-});
-
-
 // PATCH request to update a race entry with completion status (CheckIn)
 router.patch('/checkin/:entryId', async (req, res) => {
     const { entryId } = req.params;
     const { endTime, pointsEarned, mileage, elevationGain } = req.body;
-// for debugging
-console.log('req.body to see if mileage, elevation gain and points have made it', req.body);
 
     try {
         const [entry] = await pool.query('SELECT RacerID, TrailID FROM RaceEntries WHERE EntryID = ?', [entryId]);
@@ -141,18 +158,21 @@ console.log('req.body to see if mileage, elevation gain and points have made it'
 });
 
 // Add Bonus Objective Entry
-router.post('/raceEntries', async (req, res) => {
-    const { racerId, bonusPointsEarned } = req.body;
+router.post('/bonusPoints', async (req, res) => {
+    const { racerId, bonusPointsEarned, bonusObjectiveId, bonusObjectiveDescription } = req.body;
     
     try {
-      const result = await pool.query('INSERT INTO RaceEntries (RacerID, BonusPointsEarned) VALUES (?, ?)', [racerId, bonusPointsEarned]);
+      const result = await pool.query(
+        'INSERT INTO RaceEntries (RacerID, BonusPointsEarned, BonusObjectiveID, BonusObjectiveDescription) VALUES (?, ?, ?, ?)', 
+        [racerId, bonusPointsEarned, bonusObjectiveId, bonusObjectiveDescription]
+      );
       
       res.status(201).json({ message: 'New race entry with bonus points created successfully.', entryId: result.insertId });
     } catch (error) {
       console.error('Error creating new race entry:', error);
       res.status(500).json({ message: 'Failed to create new race entry with bonus points.' });
     }
-  });
+});
 
 // DELETE request to remove a race entry
 router.delete('/:entryId', (req, res) => {

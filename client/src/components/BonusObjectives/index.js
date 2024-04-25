@@ -40,6 +40,11 @@ const BonusObjectiveForm = () => {
       setConfirmationMessage('Please select a bonus objective.');
       return;
     }
+
+    if (!racerDetails || !racerDetails.RacerID) {
+      setConfirmationMessage('No racer selected or racer details are incomplete.');
+      return;
+    }
   
     const selectedObjectiveDetails = bonusObjectives.find(objective => objective.id === parseInt(selectedObjective));
     if (!selectedObjectiveDetails) {
@@ -53,16 +58,20 @@ const BonusObjectiveForm = () => {
   
     // Preparing the data for the new race entry with bonus points
     const newRaceEntryData = {
-      racerId: racerDetails.RacerID,  // Make sure this is being correctly set when racer is selected
+      racerId: racerDetails.RacerID, 
       trailId: null, // No specific trail for bonus points
       startTime: formattedStartTime,
       endTime: formattedEndTime,
       pointsEarned: 0,
       bonusPointsEarned: selectedObjectiveDetails.points,
+      BonusObjectiveID: selectedObjectiveDetails.id,
+      BonusObjectiveDescription: selectedObjectiveDetails.name,
     };
+
+    console.log('Submitting new race entry:', newRaceEntryData);
   
     try {
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/raceEntry`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/raceEntry/bonusPoints`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
