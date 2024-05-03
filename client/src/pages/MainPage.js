@@ -10,14 +10,22 @@ import RecentRaceEntries from '../components/RecentRaceEntries';
 function MainPage() {
   return (
     <RaceEntryProvider>
-      <div>
-      <h1>Main Page</h1>
-      <CheckInForm />
-      <CheckOutForm />
-      <BonusObjectivesForm />
-      <ActiveRunnerList />
-      <RecentRaceEntries />
-    </div>
+      <div className="main-container">
+        <h1>Main Page</h1>
+        <div className="content-container">
+          <div className="forms-container">
+            <CheckOutForm />
+            <CheckInForm />
+            <BonusObjectivesForm />
+          </div>
+          <div className="active-runners">
+            <ActiveRunnerList />
+          </div>
+        </div>
+        <div className="recent-entries">
+          <RecentRaceEntries />
+        </div>
+      </div>
     </RaceEntryProvider>
   );
 }

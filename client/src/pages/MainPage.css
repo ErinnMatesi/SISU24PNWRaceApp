@@ -1,0 +1,42 @@
+/* MainPage.css */
+.main-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.content-container {
+  display: flex;
+  /* flex-grow: 1;  Allow this container to take up all available space */
+}
+
+.forms-container {
+  display: flex;
+  /* flex-direction: column; */
+  flex-wrap: wrap; /* Allows items to wrap if not enough space */
+  justify-content: space-around;
+}
+
+.active-runners {
+  flex-basis: 20%; /* Adjust width based on preference */
+  height: auto; /* Adjust based on content */
+  overflow-y: auto; /* Enables scrolling */
+}
+
+.recent-entries {
+  width: 100%;
+  min-height: 20vh; /* Adjust based on content size */
+  overflow-y: auto;
+}
+
+.check-in-out-bonus {
+  flex: 1 1 25%; /* Each form takes no more than 30% of the forms-container width */
+}
+
+/* Additional styles for list containers */
+.active-runner-list,
+.recent-entries-list {
+  padding: 10px;
+  margin: 0;
+  list-style-type: none;
+}

@@ -64,8 +64,8 @@ const BonusObjectiveForm = () => {
       endTime: formattedEndTime,
       pointsEarned: 0,
       bonusPointsEarned: selectedObjectiveDetails.points,
-      BonusObjectiveID: selectedObjectiveDetails.id,
-      BonusObjectiveDescription: selectedObjectiveDetails.name,
+      bonusObjectiveId: selectedObjectiveDetails.id,
+      bonusObjectiveDescription: selectedObjectiveDetails.name,
     };
 
     console.log('Submitting new race entry:', newRaceEntryData);

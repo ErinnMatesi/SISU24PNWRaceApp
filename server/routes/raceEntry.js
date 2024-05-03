@@ -162,12 +162,13 @@ router.post('/bonusPoints', async (req, res) => {
     const { racerId, bonusPointsEarned, bonusObjectiveId, bonusObjectiveDescription } = req.body;
     
     try {
-      const result = await pool.query(
+      const [results] = await pool.query(
         'INSERT INTO RaceEntries (RacerID, BonusPointsEarned, BonusObjectiveID, BonusObjectiveDescription) VALUES (?, ?, ?, ?)', 
         [racerId, bonusPointsEarned, bonusObjectiveId, bonusObjectiveDescription]
       );
       
-      res.status(201).json({ message: 'New race entry with bonus points created successfully.', entryId: result.insertId });
+      console.log('Insert successful, result:', results);
+      res.status(201).json({ message: 'New race entry with bonus points created successfully.', entryId: results.insertId });
     } catch (error) {
       console.error('Error creating new race entry:', error);
       res.status(500).json({ message: 'Failed to create new race entry with bonus points.' });
