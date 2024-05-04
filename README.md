@@ -1,7 +1,7 @@
 # SISU 24 PNW Race App
 
 ## Description
-Live race logging for a 24 hour trail race event! Check racers in and out on trails, calculate points earned from trails and bonus objectives, display a live leaderboard and who is currently out on trail!
+Live race logging for a 24 hour trail race event! Check racers in and out on trails, calculate points earned from trails and side quests, display a live leaderboard and who is currently out on trail!
 
 ## Table of Contents
 * [Installation](#installation)
