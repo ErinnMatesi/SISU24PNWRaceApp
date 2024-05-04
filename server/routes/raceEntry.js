@@ -16,12 +16,12 @@ router.get('/', (req, res) => {
 router.get('/active', async (req, res) => {
     try {
         const query = `
-            SELECT RaceEntries.startTime, Racers.firstName, Racers.lastName, Trails.TrailName
-            FROM RaceEntries 
-            JOIN Racers ON RaceEntries.RacerID = Racers.RacerID
-            LEFT JOIN Trails ON RaceEntries.TrailID = Trails.TrailID
-            WHERE RaceEntries.endTime IS NULL 
-            ORDER BY RaceEntries.startTime ASC
+        SELECT RaceEntries.startTime, Racers.firstName, Racers.lastName, Trails.TrailName
+        FROM RaceEntries
+        JOIN Racers ON RaceEntries.RacerID = Racers.RacerID
+        LEFT JOIN Trails ON RaceEntries.TrailID = Trails.TrailID
+        WHERE RaceEntries.endTime IS NULL AND RaceEntries.TrailID IS NOT NULL
+        ORDER BY RaceEntries.startTime ASC;
         `;
         const [activeEntries] = await pool.query(query);
         res.json(activeEntries);

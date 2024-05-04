@@ -12,7 +12,7 @@ const ActiveRunnerList = () => {
         {activeRunners.map((runner, index) => (
           <div key={index} className="runner-row">
             <div>{runner.firstName} {runner.lastName}</div>
-            <div>{runner.trailName}</div>
+            <div>{runner.TrailName || "No Trail"}</div>
             <div>{new Date(runner.startTime).toLocaleTimeString()}</div>
           </div>
         ))}
