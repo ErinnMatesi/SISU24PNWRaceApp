@@ -37,7 +37,7 @@ const BonusObjectiveForm = () => {
     e.preventDefault();
   
     if (!selectedObjective) {
-      setConfirmationMessage('Please select a bonus objective.');
+      setConfirmationMessage('Please select a side quest.');
       return;
     }
 
@@ -48,7 +48,7 @@ const BonusObjectiveForm = () => {
   
     const selectedObjectiveDetails = bonusObjectives.find(objective => objective.id === parseInt(selectedObjective));
     if (!selectedObjectiveDetails) {
-      setConfirmationMessage('Invalid bonus objective selected.');
+      setConfirmationMessage('Invalid side quest selected.');
       return;
     }
 
@@ -95,11 +95,11 @@ const BonusObjectiveForm = () => {
   
 
   return (
-    <div>
-      <h2>Add Bonus Objective Points</h2>
-      <form onSubmit={handleSubmit}>
+    <div className="bonusobj-component">
+      <h2>Add Side Quest Points</h2>
+      <form className="bonus-objective-form" onSubmit={handleSubmit}>
       <BibNumberInput onRacerSelected={handleRacerSelected} />
-        <label htmlFor="objectiveSelect">Select Bonus Objective:</label>
+        <label htmlFor="objectiveSelect">Select Side Quest:</label>
         <select id="objectiveSelect" value={selectedObjective} onChange={e => setSelectedObjective(e.target.value)}>
           <option value="">Select an Objective</option>
           {bonusObjectives.map(objective => (

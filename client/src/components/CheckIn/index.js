@@ -91,7 +91,7 @@ const CheckInForm = () => {
   };
 
   return (
-      <div>
+      <div className="checkin-component">
         <h2>Check In From Trail</h2>
           <form className="checkin-form" onSubmit={handleSubmit}>
               <BibNumberInput onRacerSelected={handleRacerSelected} />

@@ -1,19 +1,41 @@
-.App {
-  text-align: center;
+/* General body styling to remove default margins and ensure full height */
+body, html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: Arial, sans-serif; /* Optional: change font family */
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
+/* Styling for the nav element */
+nav {
+  background-color: #333; /* Dark background for the nav bar */
   color: white;
+  padding: 10px 20px; /* Padding inside the nav bar */
 }
 
-.App-link {
-  color: #61dafb;
+/* Styling for the ul inside the nav */
+nav ul {
+  list-style-type: none; /* Remove default list styling */
+  margin: 0;
+  padding: 0;
+  display: flex; /* Display list items in a row */
+  align-items: center; /* Align items vertically */
+  justify-content: flex-start; /* Align items to the start of the nav bar */
 }
 
+/* Styling for each li element in the ul */
+nav ul li {
+  margin-right: 20px; /* Space between menu items */
+}
+
+/* Styling for the links */
+nav ul li a {
+  text-decoration: none; /* Remove underline from links */
+  color: white; /* White text color for readability */
+  font-weight: bold; /* Bold font for better visibility */
+}
+
+/* Hover effect for links */
+nav ul li a:hover {
+  color: #ccc; /* Light grey color on hover */
+}

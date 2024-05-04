@@ -1,3 +1,10 @@
+h2 {
+  margin-top: 10px; /* Reduces space above the header */
+  font-size: 24px; /* Adjusts the size to be more compact */
+  text-align: center; /* Centers the header */
+  color: #333;
+}
+
 .checkin-form {
   display: flex;
   flex-direction: column;

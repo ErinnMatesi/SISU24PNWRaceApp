@@ -64,30 +64,30 @@ const CheckOutForm = () => {
   };
 
     return (
-      <>
-      <h2>Check Out Onto Trail</h2>
-        <form className="checkout-form" onSubmit={handleSubmit}>
-      <BibNumberInput onRacerSelected={handleRacerSelected} />
-      <div className="form-group">
-          <label htmlFor="trailSelect">Trail:</label>
-          <select id="trailSelect" value={trailId} onChange={(e) => setTrailId(e.target.value)}>
-              {trails.map(trail => (
-                  <option key={trail.id} value={trail.id}>{trail.name}</option>
-              ))}
-          </select>
+      <div className="checkout-component">
+        <h2>Check Out Onto Trail</h2>
+          <form className="checkout-form" onSubmit={handleSubmit}>
+        <BibNumberInput onRacerSelected={handleRacerSelected} />
+        <div className="form-group">
+            <label htmlFor="trailSelect">Trail:</label>
+            <select id="trailSelect" value={trailId} onChange={(e) => setTrailId(e.target.value)}>
+                {trails.map(trail => (
+                    <option key={trail.id} value={trail.id}>{trail.name}</option>
+                ))}
+            </select>
+        </div>
+        <div className="form-group">
+            <label>Start Time:</label>
+            <input 
+                type="datetime-local" 
+                value={startTime} 
+                onChange={(e) => setStartTime(e.target.value)} 
+            />
+        </div>
+        <button type="submit">Check Out</button>
+        </form>
+        {confirmationMessage && <div className="confirmation-message">{confirmationMessage}</div>}
       </div>
-      <div className="form-group">
-          <label>Start Time:</label>
-          <input 
-              type="datetime-local" 
-              value={startTime} 
-              onChange={(e) => setStartTime(e.target.value)} 
-          />
-      </div>
-      <button type="submit">Check Out</button>
-      </form>
-      {confirmationMessage && <div className="confirmation-message">{confirmationMessage}</div>}
-      </>
     );
 };
 
