@@ -1,7 +1,7 @@
 # SISU 24 PNW Race App
 
 ## Description
-Live race logging for a 24 hour trail race event! Check racers in and out on trails, calculate points earned from trails and bonus objectives, display a live leaderboard and who is currently out on trail!
+Live race logging for a 24 hour trail race event! Check racers in and out on trails, calculate points earned from trails and side quests, display a live leaderboard and who is currently out on trail!
 
 ## Table of Contents
 * [Installation](#installation)
@@ -16,7 +16,7 @@ Live race logging for a 24 hour trail race event! Check racers in and out on tra
 Currently set up for offline use due to lack of internet at race venue, database is hosted locally so no installation and sharing at this moment. If motivated, use the db_seed file to set up your own local database and then install all dependencies, start the server and the react app and begin tracking racers!
 
 ## Usage
-Start the server and react app, navigate to the Main page to track racers in and out on trails. Pull up the Leaderboard page on a separate display to show to racers and crew. When checking in, checking out, or adding bonus points for a racer, start by typing their bib number and click "submit", then select the appropriate trail, bonus objective or bonus point object (ping pong ball or crystal) and click the lower "submit". 
+Start the server and react app, navigate to the Main page to track racers in and out on trails. Pull up the Leaderboard page on a separate display to show to racers and crew. When checking in, checking out, or adding bonus points for a racer, start by typing their bib number and click "submit", then select the appropriate trail, side quest or bonus point object (ping pong ball or crystal) and click the lower "submit". 
 
 ## Technologies
 - Javascript Stack
