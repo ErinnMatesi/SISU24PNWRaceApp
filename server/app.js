@@ -10,7 +10,7 @@ require('dotenv').config();
 const app = express();
 
 // Import all routes
-const { racersRouter, teamsRouter, trailsRouter, raceEntryRouter, bonusObjectiveRouter, raceResultsRouter } = require('./routes');
+const { racersRouter, teamsRouter, trailsRouter, raceEntryRouter, bonusObjectiveRouter, raceResultsRouter, leaderBoardRouter } = require('./routes');
 
 // Middleware
 app.use(cors()); // Enable CORS for all routes
@@ -25,6 +25,7 @@ app.use('/trails', trailsRouter);
 app.use('/raceEntry', raceEntryRouter);
 app.use('/bonusObjective', bonusObjectiveRouter);
 app.use('/raceResults', raceResultsRouter);
+app.use('/leaderboard', leaderBoardRouter)
 
 // Test Route
 app.get('/', (req, res) => {

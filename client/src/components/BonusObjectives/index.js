@@ -99,9 +99,9 @@ const BonusObjectiveForm = () => {
       <h2>Add Side Quest Points</h2>
       <form className="bonus-objective-form" onSubmit={handleSubmit}>
       <BibNumberInput onRacerSelected={handleRacerSelected} />
-        <label htmlFor="objectiveSelect">Select Side Quest:</label>
+        <label htmlFor="objectiveSelect">Side Quest:</label>
         <select id="objectiveSelect" value={selectedObjective} onChange={e => setSelectedObjective(e.target.value)}>
-          <option value="">Select an Objective</option>
+          <option value="">Select a Side Quest</option>
           {bonusObjectives.map(objective => (
             <option key={objective.id} value={objective.id}>{objective.name} - {objective.points} Points</option>
           ))}

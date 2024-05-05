@@ -4,6 +4,7 @@ const trailsRouter = require('./trails');
 const raceEntryRouter = require('./raceEntry');
 const bonusObjectiveRouter = require('./bonusObjective');
 const raceResultsRouter = require('./raceResults');
+const leaderBoardRouter = require('./leaderboard');
 
 module.exports = {
     racersRouter,
@@ -11,5 +12,6 @@ module.exports = {
     trailsRouter,
     raceEntryRouter,
     bonusObjectiveRouter,
-    raceResultsRouter
+    raceResultsRouter,
+    leaderBoardRouter
 };

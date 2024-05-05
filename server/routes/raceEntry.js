@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const pool = require('../config/dbConfig'); // Ensure the correct path to your dbConfig file
+const pool = require('../config/dbConfig');
 
 // GET request for list of race entries
 router.get('/', (req, res) => {
