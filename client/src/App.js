@@ -1,6 +1,6 @@
 import './App.css';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
-import { LeaderboardProvider } from './contexts/LeaderboardContext';
+import { LeaderboardProvider } from './components/Leaderboard/LeaderboardContext';
 import { ActiveRunnerProvider } from './components/ActiveRunnerList/ActiveRunnerContext';
 import MainPage from './pages/MainPage';
 import LeaderboardPage from './pages/LeaderboardPage';

@@ -1,14 +1,14 @@
 import React, { useContext } from 'react';
-import { LeaderboardContext } from './LeaderboardContext';
 import './index.css';
+import { LeaderboardContext } from './LeaderboardContext';
 
 const Leaderboard = () => {
   const { maleRunners, femaleRunners, teams, hundredMilers } = useContext(LeaderboardContext);
 
   return (
-      <div>
+      <div className="leaderboard-container">
           <h1>Leaderboard</h1>
-          <div>
+          <div className="category">
               <h2>Male Runners</h2>
               <ul>
                   {maleRunners.map(runner => (
@@ -16,7 +16,7 @@ const Leaderboard = () => {
                   ))}
               </ul>
           </div>
-          <div>
+          <div className="category">
               <h2>Female Runners</h2>
               <ul>
                   {femaleRunners.map(runner => (
@@ -24,7 +24,7 @@ const Leaderboard = () => {
                   ))}
               </ul>
           </div>
-          <div>
+          <div className="category">
               <h2>Teams</h2>
               <ul>
                   {teams.map(team => (
@@ -32,7 +32,7 @@ const Leaderboard = () => {
                   ))}
               </ul>
           </div>
-          <div>
+          <div className="category">
               <h2>100 Milers</h2>
               <ul>
                   {hundredMilers.map(miler => (
