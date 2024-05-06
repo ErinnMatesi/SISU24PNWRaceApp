@@ -6,10 +6,10 @@ import CheckOutForm from '../components/CheckOut';
 import BonusObjectivesForm from '../components/BonusObjectives';
 import ActiveRunnerList from '../components/ActiveRunnerList';
 import RecentRaceEntries from '../components/RecentRaceEntries';
-import { useLeaderboardData } from '../components/Leaderboard/LeaderboardContext';
+import { useLeaderboard } from '../components/Leaderboard/LeaderboardContext';
 
 function MainPage() {
-  const { fetchLeaderboardData } = useLeaderboardData();
+  const { fetchLeaderboardData } = useLeaderboard();
 
   return (
     <RaceEntryProvider>

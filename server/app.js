@@ -13,7 +13,11 @@ const app = express();
 const { racersRouter, teamsRouter, trailsRouter, raceEntryRouter, bonusObjectiveRouter, raceResultsRouter, leaderBoardRouter } = require('./routes');
 
 // Middleware
-app.use(cors()); // Enable CORS for all routes
+app.use(cors({
+    origin: 'http://localhost:3001', // Adjust this to match your client URL
+    methods: ['GET', 'POST', 'PATCH', 'DELETE'],
+    credentials: true
+}));
 app.use(morgan('dev')); // Logger
 app.use(bodyParser.json()); // Parse JSON bodies
 app.use(bodyParser.urlencoded({ extended: true })); // Parse URL-encoded bodies

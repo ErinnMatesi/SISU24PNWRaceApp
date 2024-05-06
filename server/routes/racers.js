@@ -31,27 +31,19 @@ router.get('/:bibNumber', async (req, res) => {
 });
 
 // Add a new racer
-router.post('/', (req, res) => {
-  let racers = req.body;
-
-  // Check if racers is an array, if not, make it an array
-  if (!Array.isArray(racers)) {
-      racers = [racers];
-  }
-
-  // Optional: Add validation for each racer object
-
-  const insertQuery = 'INSERT INTO Racers (FullName, Gender, Age, BibNumber, Division, TeamID) VALUES ?';
-  const values = racers.map(racer => [racer.fullName, racer.gender, racer.age, racer.bibNumber, racer.division, racer.teamId]);
-
-  pool.query(insertQuery, [values], (error, results) => {
-      if (error) {
-          console.error('Error inserting data into database:', error);
-          return res.status(500).json({ message: 'Error adding racers' });
-      }
-      res.status(201).json({ message: 'Racers added successfully', affectedRows: results.affectedRows });
-  });
-});
+router.post('/', async (req, res) => {
+    let { gender, age, bibNumber, division, firstName, lastName, teamId } = req.body;
+    
+    const insertQuery = 'INSERT INTO Racers (FirstName, LastName, Gender, Age, BibNumber, Division, TeamID) VALUES (?, ?, ?, ?, ?, ?, ?)';
+    
+    pool.query(insertQuery, [firstName, lastName, gender, age || null, bibNumber, division, teamId || null], (error, results) => {
+        if (error) {
+            console.error('Error inserting data into database:', error);
+            return res.status(500).json({ message: 'Error adding racer' });
+        }
+        res.status(201).json({ message: 'Racer added successfully', racerId: results.insertId });
+    });
+  });  
 
 // PUT request to update a racer
 router.put('/:racerId', (req, res) => {

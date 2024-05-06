@@ -5,7 +5,7 @@ import { ActiveRunnerProvider } from './components/ActiveRunnerList/ActiveRunner
 import MainPage from './pages/MainPage';
 import LeaderboardPage from './pages/LeaderboardPage';
 // import EditPage from './pages/EditPage';
-// import RegistrationPage from '/.pages/RegistrationPage';
+import RegistrationPage from './pages/RegistrationPage';
 
 function App() {
   return (
@@ -14,8 +14,8 @@ function App() {
         <ul>
           <li><Link to="/">Main</Link></li>
           <li><Link to="/leaderboard">Leaderboard</Link></li>
-         {/*<li><Link to="/edit">Edit</Link></li>
-          <li><Link to="/">Registration</Link></li> */}
+          {/* <li><Link to="/edit">Edit</Link></li> */}
+          <li><Link to="/registration">Registration</Link></li>
         </ul>
       </nav>
       <LeaderboardProvider>
@@ -23,8 +23,8 @@ function App() {
         <Routes>
           <Route path="/" element={<MainPage />} />
           <Route path="/leaderboard" element={<LeaderboardPage />} />
-          {/*<Route path="/edit" element={<EditPage />} />
-          <Route path="/" element={<RegistrationPage />} /> */}
+          {/* <Route path="/edit" element={<EditPage />} /> */}
+          <Route path="/registration" element={<RegistrationPage />} />
         </Routes>
       </ActiveRunnerProvider>
       </LeaderboardProvider>

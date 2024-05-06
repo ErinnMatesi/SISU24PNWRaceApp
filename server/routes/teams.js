@@ -14,20 +14,20 @@ router.get('/', (req, res) => {
 });
 
 // POST request to add a new team
-router.post('/', (req, res) => {
+router.post('/', async (req, res) => {
     const { teamName } = req.body;
     if (!teamName) {
         return res.status(400).json({ message: 'Team name is required' });
     }
 
-    const insertQuery = 'INSERT INTO Teams (TeamName) VALUES (?)';
-    pool.query(insertQuery, [teamName], (error, results) => {
-        if (error) {
-            console.error('Error inserting data into database:', error);
-            return res.status(500).json({ message: 'Error adding team' });
-        }
+    try {
+        const [results] = await pool.query('INSERT INTO Teams (TeamName) VALUES (?)', [teamName]);
+        console.log('Team added successfully', results);
         res.status(201).json({ message: 'Team added successfully', teamId: results.insertId });
-    });
+    } catch (error) {
+        console.error('Error inserting data into database:', error);
+        res.status(500).json({ message: 'Error adding team' });
+    }
 });
 
 // DELETE request to remove a team
