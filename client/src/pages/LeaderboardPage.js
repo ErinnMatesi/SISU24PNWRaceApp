@@ -1,11 +1,12 @@
 import React from 'react';
 import './LeaderboardPage.css';
 import ActiveRunnerList from '../components/ActiveRunnerList';
+import Leaderboard from '../components/Leaderboard';
 
 function LeaderboardPage() {
   return (
     <div>
-      <h1>Leaderboard</h1>
+      <Leaderboard />
       <ActiveRunnerList />
     </div>
   );

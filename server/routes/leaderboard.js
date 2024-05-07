@@ -3,26 +3,28 @@ const router = express.Router();
 const pool = require('../config/dbConfig');
 
 // Individual Gendered Leaderboard
-router.get('/gender', async (req, res) => {
-  const gender = req.query.gender;
-  if (!['Male', 'Female'].includes(gender)) {
-      return res.status(400).json({ message: 'Invalid gender specified' });
-  }
-
-  try {
-      const query = `
-          SELECT FirstName, LastName, TotalPoints
-          FROM Racers
-          WHERE Gender = ?
-          ORDER BY TotalPoints DESC;
-      `;
-      const [results] = await pool.query(query, [gender]);
-      res.json(results);
-  } catch (error) {
-      console.error('Error fetching leaderboard for gender:', error);
-      res.status(500).send('Internal Server Error');
-  }
-});
+router.get('/gender/:gender', async (req, res) => {
+    const { gender } = req.params; // Change to use params instead of query
+    console.log('Received request for gender:', req.query.gender);
+    if (!['Male', 'Female', 'Nonbinary'].includes(gender)) {
+        return res.status(400).json({ message: 'Invalid gender specified' });
+    }
+  
+    try {
+        const query = `
+            SELECT FirstName, LastName, TotalPoints
+            FROM Racers
+            WHERE Gender = ?
+            ORDER BY TotalPoints DESC;
+        `;
+        const [results] = await pool.query(query, [gender]);
+        console.log('Query results:', results);
+        res.json(results);
+    } catch (error) {
+        console.error(`Error fetching leaderboard for gender ${gender}:`, error);
+        res.status(500).send('Internal Server Error');
+    }
+  });  
 
 // Team Leaderboard
 router.get('/teams', async (req, res) => {
