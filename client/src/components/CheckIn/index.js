@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import BibNumberInput from '../BibNumberInput';
 import './index.css'; 
+import { useRaceEntries } from '../RecentRaceEntries/RaceEntryContext';
 
 const CheckInForm = () => {
   const [racerDetails, setRacerDetails] = useState(null);
@@ -9,6 +10,7 @@ const CheckInForm = () => {
   const [completionStatus, setCompletionStatus] = useState('');
   const [confirmationMessage, setConfirmationMessage] = useState('');
   const [entryId, setEntryId] = useState(null);
+  const { triggerRefresh } = useRaceEntries();
 
   // Fetch trail details when racerDetails are updated
     useEffect(() => {
@@ -82,6 +84,7 @@ const CheckInForm = () => {
           if (!response.ok) throw new Error('Check-in failed.');
 
           setConfirmationMessage(`${racerDetails.FirstName} completed ${trailDetails.TrailName} earning ${pointsEarned} points!`);
+          triggerRefresh();
           setRacerDetails(null);
           setCompletionStatus('');
       } catch (error) {

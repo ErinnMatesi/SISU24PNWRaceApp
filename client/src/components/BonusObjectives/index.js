@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import BibNumberInput from '../BibNumberInput';
 import './index.css'; 
+import { useRaceEntries } from '../RecentRaceEntries/RaceEntryContext';
 
 function formatMySQLDate(date) {
   const offset = date.getTimezoneOffset();
@@ -13,6 +14,7 @@ const BonusObjectiveForm = () => {
   const [bonusObjectives, setBonusObjectives] = useState([]);
   const [selectedObjective, setSelectedObjective] = useState('');
   const [confirmationMessage, setConfirmationMessage] = useState('');
+  const { triggerRefresh } = useRaceEntries();
 
   useEffect(() => {
     const fetchBonusObjectives = async () => {
@@ -86,6 +88,7 @@ const BonusObjectiveForm = () => {
   
       const responseData = await response.json();
       setConfirmationMessage(`Bonus points successfully applied. Entry ID: ${responseData.entryId}`);
+      triggerRefresh();
       setSelectedObjective('');
     } catch (error) {
       console.error('Error creating new race entry with bonus points:', error);

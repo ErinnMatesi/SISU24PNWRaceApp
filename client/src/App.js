@@ -2,6 +2,7 @@ import './App.css';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import { LeaderboardProvider } from './components/Leaderboard/LeaderboardContext';
 import { ActiveRunnerProvider } from './components/ActiveRunnerList/ActiveRunnerContext';
+import { RaceEntryProvider } from './components/RecentRaceEntries/RaceEntryContext';
 import MainPage from './pages/MainPage';
 import LeaderboardPage from './pages/LeaderboardPage';
 // import EditPage from './pages/EditPage';
@@ -20,13 +21,15 @@ function App() {
       </nav>
       <LeaderboardProvider>
         <ActiveRunnerProvider>
-        <Routes>
-          <Route path="/" element={<MainPage />} />
-          <Route path="/leaderboard" element={<LeaderboardPage />} />
-          {/* <Route path="/edit" element={<EditPage />} /> */}
-          <Route path="/registration" element={<RegistrationPage />} />
-        </Routes>
-      </ActiveRunnerProvider>
+          <RaceEntryProvider>
+            <Routes>
+              <Route path="/" element={<MainPage />} />
+              <Route path="/leaderboard" element={<LeaderboardPage />} />
+              {/* <Route path="/edit" element={<EditPage />} /> */}
+              <Route path="/registration" element={<RegistrationPage />} />
+            </Routes>
+          </RaceEntryProvider>
+        </ActiveRunnerProvider>
       </LeaderboardProvider>
     </Router>
   );

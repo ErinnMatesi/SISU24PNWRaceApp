@@ -1,10 +1,10 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { RaceEntryContext } from './RaceEntryContext';
+import React, { useEffect, useState } from 'react';
+import { useRaceEntries } from './RaceEntryContext';
 import './index.css';
 
 const RecentRaceEntries = () => {
   const [entries, setEntries] = useState([]);
-  const { updateTrigger } = useContext(RaceEntryContext);
+  const { updateTrigger } = useRaceEntries();
 
   useEffect(() => {
       fetchRecentEntries();

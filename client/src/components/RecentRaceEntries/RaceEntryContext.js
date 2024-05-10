@@ -1,16 +1,18 @@
-import React, { createContext, useState } from 'react';
+import React, { createContext, useState, useContext } from 'react';
 
-export const RaceEntryContext = createContext();
+const RaceEntryContext = createContext();
+
+export const useRaceEntries = () => useContext(RaceEntryContext);
 
 export const RaceEntryProvider = ({ children }) => {
     const [updateTrigger, setUpdateTrigger] = useState(0);
 
-    const triggerUpdate = () => {
-        setUpdateTrigger(prev => prev + 1); // Increment to trigger useEffect
+    const triggerRefresh = () => {
+        setUpdateTrigger(prev => prev + 1); // Increment to trigger refresh
     };
 
     return (
-        <RaceEntryContext.Provider value={{ updateTrigger, triggerUpdate }}>
+        <RaceEntryContext.Provider value={{ updateTrigger, triggerRefresh }}>
             {children}
         </RaceEntryContext.Provider>
     );

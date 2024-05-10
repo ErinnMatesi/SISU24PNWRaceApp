@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import BibNumberInput from '../BibNumberInput';
 import './index.css';
+import { useRaceEntries } from '../RecentRaceEntries/RaceEntryContext';
 
 const trails = [
     { id: 1, name: 'Noble Knob' },
@@ -16,6 +17,7 @@ const CheckOutForm = () => {
     const [trailId, setTrailId] = useState(trails[0].id);
     const [startTime, setStartTime] = useState(new Date().toISOString().slice(0, 16));
     const [confirmationMessage, setConfirmationMessage] = useState(''); // New state for confirmation message
+    const { triggerRefresh } = useRaceEntries();
 
     const handleRacerSelected = (data) => {
       console.log("Racer selected:", data);
@@ -54,6 +56,7 @@ const CheckOutForm = () => {
           const selectedTrail = trails.find(trail => trail.id === Number(trailId));
           const selectedTrailName = selectedTrail ? selectedTrail.name : 'Unknown Trail';
           setConfirmationMessage(`${racerDetails.FirstName} checked out on ${selectedTrailName} at ${startTime}.`);
+          triggerRefresh();
           console.log('Race entry created:', responseData); // For    debugging, can be removed
           setRacerDetails(null);
         } catch (error) {
