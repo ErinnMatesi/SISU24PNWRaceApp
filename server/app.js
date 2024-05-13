@@ -1,4 +1,6 @@
 const express = require('express');
+const http = require('http');
+const socketIo = require('socket.io');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const morgan = require('morgan');
@@ -8,6 +10,20 @@ require('dotenv').config();
 
 // Create an instance of Express
 const app = express();
+const server = http.createServer(app);
+const io = socketIo(server);  // attach socket.io to the server
+
+io.on('connection', (socket) => {
+    console.log('New client connected');
+
+    socket.on('disconnect', () => {
+        console.log('Client disconnected');
+    });
+});
+
+const updateLeaderboard = (data) => {
+    io.sockets.emit('update', data);  // Emitting data to all connected clients
+};
 
 // Import all routes
 const { racersRouter, teamsRouter, trailsRouter, raceEntryRouter, bonusObjectiveRouter, raceResultsRouter, leaderBoardRouter } = require('./routes');
@@ -31,10 +47,6 @@ app.use('/bonusObjective', bonusObjectiveRouter);
 app.use('/raceResults', raceResultsRouter);
 app.use('/leaderboard', leaderBoardRouter)
 
-// Test Route
-app.get('/', (req, res) => {
-    res.send('Hello from the SISU 24 Ultra PNW App!');
-});
 
 // Start the server
 const PORT = process.env.PORT || 3000;

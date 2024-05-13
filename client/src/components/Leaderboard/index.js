@@ -1,14 +1,33 @@
-import React, { useContext } from 'react';
+import React, { useEffect, useState } from 'react';
 import './index.css';
-import { useLeaderboard } from './LeaderboardContext';
+// import { useLeaderboard } from './LeaderboardContext';
+import io from 'socket.io-client';
+
+let socket;
 
 const Leaderboard = () => {
-    const { maleRunners, femaleRunners, teams, hundredMilers } = useLeaderboard();
+    const [leaderboardData, setLeaderboardData] = useState([]);
+
+    useEffect(() => {
+        // Connect to WebSocket server
+        socket = io('http://localhost:3000');
+
+        // Listen for updates
+        socket.on('update', data => {
+            console.log('Data received:', data);
+            setLeaderboardData(data);  // Update leaderboard with the new data
+        });
+
+        return () => socket.disconnect();
+    }, []);
 
     return (
         <div className="leaderboard-container">
             <h1>Leaderboard</h1>
-            <div className="category">
+            {leaderboardData.map((entry, index) => (
+                <div key={index}>{entry.racerName} - {entry.points}</div>
+            ))}
+            {/* <div className="category">
                 <h2>Male Runners</h2>
                 <ul>
                     {maleRunners.map((runner) => (
@@ -39,7 +58,7 @@ const Leaderboard = () => {
                         <li key={miler.RacerID}>{miler.FirstName} {miler.LastName} - Miles: {miler.TotalMiles}</li>
                     ))}
                 </ul>
-            </div>
+            </div> */}
         </div>
     );
 };

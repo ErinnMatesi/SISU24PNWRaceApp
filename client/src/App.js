@@ -1,6 +1,6 @@
 import './App.css';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
-import { LeaderboardProvider } from './components/Leaderboard/LeaderboardContext';
+// import { LeaderboardProvider } from './components/Leaderboard/LeaderboardContext';
 import { ActiveRunnerProvider } from './components/ActiveRunnerList/ActiveRunnerContext';
 import { RaceEntryProvider } from './components/RecentRaceEntries/RaceEntryContext';
 import MainPage from './pages/MainPage';
@@ -19,7 +19,7 @@ function App() {
           <li><Link to="/registration">Registration</Link></li>
         </ul>
       </nav>
-      <LeaderboardProvider>
+      {/* <LeaderboardProvider> */}
         <ActiveRunnerProvider>
           <RaceEntryProvider>
             <Routes>
@@ -30,7 +30,7 @@ function App() {
             </Routes>
           </RaceEntryProvider>
         </ActiveRunnerProvider>
-      </LeaderboardProvider>
+      {/* </LeaderboardProvider> */}
     </Router>
   );
 }
