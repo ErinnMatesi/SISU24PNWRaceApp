@@ -14,10 +14,19 @@ export const LeaderboardProvider = ({ children }) => {
     };
 
     useEffect(() => {
-        fetchMaleRunners();
-        fetchFemaleRunners();
-        fetchTeams();
-        fetchHundredMilers();
+        const fetchInterval = 120000; // 120000 milliseconds = 2 minutes
+
+        const fetchData = () => {
+            fetchMaleRunners();
+            fetchFemaleRunners();
+            fetchTeams();
+            fetchHundredMilers();
+        };
+
+        fetchData(); // Initial fetch
+        const interval = setInterval(fetchData, fetchInterval);
+
+        return () => clearInterval(interval); // Cleanup on unmount
     }, []);
 
     const fetchMaleRunners = () => {

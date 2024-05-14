@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 
 const ActiveRunnerContext = createContext();
 
@@ -16,6 +16,14 @@ export const ActiveRunnerProvider = ({ children }) => {
       console.error('Error fetching active runners:', error);
     }
   };
+
+  // Set up polling
+  useEffect(() => {
+    fetchActiveRunners(); // Fetch immediately on mount
+    const interval = setInterval(fetchActiveRunners, 120000); // 120000 ms = 2 minutes
+    
+    return () => clearInterval(interval); // Cleanup on unmount
+  }, []);
 
   return (
     <ActiveRunnerContext.Provider value={{ activeRunners, fetchActiveRunners }}>

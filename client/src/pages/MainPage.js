@@ -6,15 +6,12 @@ import CheckOutForm from '../components/CheckOut';
 import BonusObjectivesForm from '../components/BonusObjectives';
 import ActiveRunnerList from '../components/ActiveRunnerList';
 import RecentRaceEntries from '../components/RecentRaceEntries';
-import { useLeaderboard } from '../components/Leaderboard/LeaderboardContext';
 
 function MainPage() {
-  const { fetchLeaderboardData } = useLeaderboard();
 
   return (
     <RaceEntryProvider>
       <h1>Main Page</h1>
-      <button onClick={fetchLeaderboardData}>Refresh Leaderboard</button>
       <div className="main-container">
         <div className="content-container">
           <div className="forms-container">

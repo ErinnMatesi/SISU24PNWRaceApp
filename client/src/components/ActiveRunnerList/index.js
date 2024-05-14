@@ -2,12 +2,11 @@ import { useActiveRunners } from './ActiveRunnerContext';
 import './index.css'; 
 
 const ActiveRunnerList = () => {
-  const { activeRunners, fetchActiveRunners } = useActiveRunners();
+  const { activeRunners } = useActiveRunners();
 
   return (
     <div>
       <h2>Currently On Trail</h2>
-      <button onClick={fetchActiveRunners}>Refresh List</button>
       <div className="active-runner-list">
         {activeRunners.map((runner, index) => (
           <div key={index} className="runner-row">
