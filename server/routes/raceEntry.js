@@ -61,12 +61,14 @@ router.get('/recent', async (req, res) => {
     try {
         const [results] = await pool.query(`
         SELECT e.EntryID, 
-            r.FirstName, 
-            r.LastName, 
-            r.BibNumber, 
-            t.TrailName, 
-            (e.PointsEarned IS NOT NULL OR e.BonusPointsEarned IS NOT NULL) AS HasPoints,
-            b.Description AS BonusObjectiveDescription
+               r.FirstName, 
+               r.LastName, 
+               r.BibNumber, 
+               t.TrailName, 
+               (e.PointsEarned IS NOT NULL OR e.BonusPointsEarned IS NOT NULL) AS HasPoints,
+               b.Description AS BonusObjectiveDescription,
+               e.EndTime,
+               e.StartTime
         FROM RaceEntries e
         LEFT JOIN Racers r ON e.RacerID = r.RacerID
         LEFT JOIN Trails t ON e.TrailID = t.TrailID
@@ -158,21 +160,30 @@ router.patch('/checkin/:entryId', async (req, res) => {
     }
 });
 
-// Add Bonus Objective Entry
+// POST Bonus Objective Entry
 router.post('/bonusPoints', async (req, res) => {
     const { racerId, bonusPointsEarned, bonusObjectiveId, bonusObjectiveDescription } = req.body;
     
     try {
-      const [results] = await pool.query(
-        'INSERT INTO RaceEntries (RacerID, BonusPointsEarned, BonusObjectiveID, BonusObjectiveDescription) VALUES (?, ?, ?, ?)', 
-        [racerId, bonusPointsEarned, bonusObjectiveId, bonusObjectiveDescription]
-      );
-      
-      console.log('Insert successful, result:', results);
-      res.status(201).json({ message: 'New race entry with bonus points created successfully.', entryId: results.insertId });
+        // Insert new race entry with bonus points
+        const [results] = await pool.query(
+            'INSERT INTO RaceEntries (RacerID, BonusPointsEarned, BonusObjectiveID, BonusObjectiveDescription) VALUES (?, ?, ?, ?)', 
+            [racerId, bonusPointsEarned, bonusObjectiveId, bonusObjectiveDescription]
+        );
+        
+        // Fetch current totals for the racer
+        const [currentTotals] = await pool.query('SELECT TotalPoints FROM Racers WHERE RacerID = ?', [racerId]);
+        
+        // Calculate new total points
+        const newPoints = (currentTotals[0].TotalPoints || 0) + (bonusPointsEarned || 0);
+        
+        // Update racer's total points
+        await pool.query('UPDATE Racers SET TotalPoints = ? WHERE RacerID = ?', [newPoints, racerId]);
+        
+        res.status(201).json({ message: 'New race entry with bonus points created and racer totals updated successfully.', entryId: results.insertId });
     } catch (error) {
-      console.error('Error creating new race entry:', error);
-      res.status(500).json({ message: 'Failed to create new race entry with bonus points.' });
+        console.error('Error creating new race entry or updating racer totals:', error);
+        res.status(500).json({ message: 'Failed to create new race entry with bonus points and update racer totals.' });
     }
 });
 

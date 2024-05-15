@@ -7,6 +7,7 @@ const RecentRaceEntries = () => {
   const { updateTrigger } = useRaceEntries();
 
   useEffect(() => {
+    console.log('updateTrigger changed:', updateTrigger);
       fetchRecentEntries();
   }, [updateTrigger]);
 
@@ -19,8 +20,9 @@ const RecentRaceEntries = () => {
               'Expires': '0' // Proxies
             }});
           const data = await response.json();
-          console.log("Recent Entries:", data);
+          console.log("Fetched recent entries data:", data);
           setEntries(data);
+          console.log("Entries state updated:", data);
       } catch (error) {
           console.error('Failed to fetch recent race entries:', error);
       }
@@ -30,6 +32,7 @@ const RecentRaceEntries = () => {
     <div className="recent-entries-container">
       <h3 className="recent-entries-header">Recent Race Entries</h3>
       <ul className="recent-entries-list">
+      {console.log("Rendering entries:", entries)}
         {entries.map((entry) => (
           <li key={entry.EntryID} className="recent-entry-item">
             {entry.FirstName} {entry.LastName} (Bib: {entry.BibNumber}) - 

@@ -8,7 +8,12 @@ export const RaceEntryProvider = ({ children }) => {
     const [updateTrigger, setUpdateTrigger] = useState(0);
 
     const triggerRefresh = () => {
-        setUpdateTrigger(prev => prev + 1); // Increment to trigger refresh
+        console.log('Previous updateTrigger:', updateTrigger);
+        setUpdateTrigger(prev => {
+            const newValue = prev + 1;
+            console.log('New updateTrigger:', newValue);
+            return newValue;
+        });
     };
 
     return (

@@ -3,12 +3,6 @@ import BibNumberInput from '../BibNumberInput';
 import './index.css'; 
 import { useRaceEntries } from '../RecentRaceEntries/RaceEntryContext';
 
-function formatMySQLDate(date) {
-  const offset = date.getTimezoneOffset();
-  const adjustedDate = new Date(date.getTime() - (offset * 60 * 1000));
-  return adjustedDate.toISOString().split('T')[0] + ' ' + adjustedDate.toISOString().split('T')[1].slice(0, 8);
-}
-
 const BonusObjectiveForm = () => {
   const [racerDetails, setRacerDetails] = useState(null);
   const [bonusObjectives, setBonusObjectives] = useState([]);
@@ -33,7 +27,7 @@ const BonusObjectiveForm = () => {
   const handleRacerSelected = (racer) => {
     console.log("Racer selected:", racer);
     setRacerDetails(racer);
-};
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -53,18 +47,10 @@ const BonusObjectiveForm = () => {
       setConfirmationMessage('Invalid side quest selected.');
       return;
     }
-
-    const now = new Date();
-    const formattedStartTime = formatMySQLDate(now);
-    const formattedEndTime = formatMySQLDate(now);
   
     // Preparing the data for the new race entry with bonus points
     const newRaceEntryData = {
       racerId: racerDetails.RacerID, 
-      trailId: null, // No specific trail for bonus points
-      startTime: formattedStartTime,
-      endTime: formattedEndTime,
-      pointsEarned: 0,
       bonusPointsEarned: selectedObjectiveDetails.points,
       bonusObjectiveId: selectedObjectiveDetails.id,
       bonusObjectiveDescription: selectedObjectiveDetails.name,
@@ -87,21 +73,21 @@ const BonusObjectiveForm = () => {
       }
   
       const responseData = await response.json();
-      setConfirmationMessage(`Bonus points successfully applied. Entry ID: ${responseData.entryId}`);
+      setConfirmationMessage(`Bonus points successfully applied. Points Earned: ${selectedObjectiveDetails.points}`);
       triggerRefresh();
+      setRacerDetails(null);
       setSelectedObjective('');
     } catch (error) {
       console.error('Error creating new race entry with bonus points:', error);
       setConfirmationMessage('Failed to apply bonus points. ' + error.message);
     }
   };
-  
 
   return (
     <div className="bonusobj-component">
       <h2>Add Side Quest Points</h2>
       <form className="bonus-objective-form" onSubmit={handleSubmit}>
-      <BibNumberInput onRacerSelected={handleRacerSelected} />
+        <BibNumberInput onRacerSelected={handleRacerSelected} />
         <label htmlFor="objectiveSelect">Side Quest:</label>
         <select id="objectiveSelect" value={selectedObjective} onChange={e => setSelectedObjective(e.target.value)}>
           <option value="">Select a Side Quest</option>

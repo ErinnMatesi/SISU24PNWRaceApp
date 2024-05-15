@@ -85,6 +85,7 @@ const CheckInForm = () => {
 
           setConfirmationMessage(`${racerDetails.FirstName} completed ${trailDetails.TrailName} earning ${pointsEarned} points!`);
           triggerRefresh();
+          console.log('Triggered refresh after CheckIn');
           setRacerDetails(null);
           setCompletionStatus('');
       } catch (error) {
