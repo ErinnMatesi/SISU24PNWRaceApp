@@ -8,7 +8,7 @@ const RegistrationPage = () => {
 
     const handleTeamSubmit = async (event) => {
       event.preventDefault();
-      const teamData = { teamName: teamName }; // Ensure you have the state `newTeamName` properly set up
+      const teamData = { teamName: teamName };
       console.log('Sending request to create team:', teamData);
   
       fetch(`${process.env.REACT_APP_API_URL}/teams`, {
@@ -30,16 +30,24 @@ const RegistrationPage = () => {
       });
   };  
 
-    const handleRacerSubmit = async (event) => {
-        event.preventDefault();
-        const response = await fetch(`${process.env.REACT_APP_API_URL}/racer`, {
+  const handleRacerSubmit = async (event) => {
+    event.preventDefault();
+    console.log('Sending racer data:', racerData); // Log data being sent
+    try {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/racers`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify([racerData]) // Sending as an array for backend compatibility
+            body: JSON.stringify(racerData) // Send the data as an object, not an array
         });
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
         const data = await response.json();
         alert(data.message); // Simple alert to show the operation result
-    };
+    } catch (error) {
+        console.error('Error registering racer:', error);
+    }
+};
 
     return (
         <div className="registration-page">

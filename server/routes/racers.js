@@ -32,18 +32,20 @@ router.get('/:bibNumber', async (req, res) => {
 
 // Add a new racer
 router.post('/', async (req, res) => {
+    console.log('Received racer data:', req.body);
+
     let { gender, age, bibNumber, division, firstName, lastName, teamId } = req.body;
     
     const insertQuery = 'INSERT INTO Racers (FirstName, LastName, Gender, Age, BibNumber, Division, TeamID) VALUES (?, ?, ?, ?, ?, ?, ?)';
     
-    pool.query(insertQuery, [firstName, lastName, gender, age || null, bibNumber, division, teamId || null], (error, results) => {
-        if (error) {
-            console.error('Error inserting data into database:', error);
-            return res.status(500).json({ message: 'Error adding racer' });
-        }
+    try {
+        const [results] = await pool.query(insertQuery, [firstName, lastName, gender, age || null, bibNumber, division, teamId || null]);
         res.status(201).json({ message: 'Racer added successfully', racerId: results.insertId });
-    });
-  });  
+    } catch (error) {
+        console.error('Error inserting data into database:', error);
+        res.status(500).json({ message: 'Error adding racer' });
+    }
+});
 
 // PUT request to update a racer
 router.put('/:racerId', (req, res) => {
