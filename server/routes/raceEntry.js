@@ -13,6 +13,7 @@ router.get('/', (req, res) => {
     });
 });
 
+// GET request to pull active runners
 router.get('/active', async (req, res) => {
     try {
         const query = `
@@ -107,6 +108,33 @@ router.post('/checkout', async (req, res) => {
     }
 });
 
+// POST Bonus Objective Entry
+router.post('/bonusPoints', async (req, res) => {
+    const { racerId, bonusPointsEarned, bonusObjectiveId, bonusObjectiveDescription } = req.body;
+    
+    try {
+        // Insert new race entry with bonus points
+        const [results] = await pool.query(
+            'INSERT INTO RaceEntries (RacerID, BonusPointsEarned, BonusObjectiveID, BonusObjectiveDescription) VALUES (?, ?, ?, ?)', 
+            [racerId, bonusPointsEarned, bonusObjectiveId, bonusObjectiveDescription]
+        );
+        
+        // Fetch current totals for the racer
+        const [currentTotals] = await pool.query('SELECT TotalPoints FROM Racers WHERE RacerID = ?', [racerId]);
+        
+        // Calculate new total points
+        const newPoints = (currentTotals[0].TotalPoints || 0) + (bonusPointsEarned || 0);
+        
+        // Update racer's total points
+        await pool.query('UPDATE Racers SET TotalPoints = ? WHERE RacerID = ?', [newPoints, racerId]);
+        
+        res.status(201).json({ message: 'New race entry with bonus points created and racer totals updated successfully.', entryId: results.insertId });
+    } catch (error) {
+        console.error('Error creating new race entry or updating racer totals:', error);
+        res.status(500).json({ message: 'Failed to create new race entry with bonus points and update racer totals.' });
+    }
+});
+
 // PATCH request to update a race entry with completion status (CheckIn)
 router.patch('/checkin/:entryId', async (req, res) => {
     const { entryId } = req.params;
@@ -160,52 +188,115 @@ router.patch('/checkin/:entryId', async (req, res) => {
     }
 });
 
-// POST Bonus Objective Entry
-router.post('/bonusPoints', async (req, res) => {
-    const { racerId, bonusPointsEarned, bonusObjectiveId, bonusObjectiveDescription } = req.body;
-    
+router.patch('/raceEntry/:id', async (req, res) => {
+    const { id } = req.params;
+    const { startTime, endTime, pointsEarned, bonusPointsEarned, bonusObjectiveDescription, trailId } = req.body;
+  
+    // Fetch the old entry to compare values
+    const [oldEntry] = await pool.query('SELECT * FROM RaceEntries WHERE EntryID = ?', [id]);
+  
+    if (oldEntry.length === 0) {
+      return res.status(404).json({ message: 'Race entry not found' });
+    }
+  
+    const old = oldEntry[0];
+  
+    const fields = [
+      startTime ? 'StartTime = ?' : null,
+      endTime ? 'EndTime = ?' : null,
+      pointsEarned ? 'PointsEarned = ?' : null,
+      bonusPointsEarned ? 'BonusPointsEarned = ?' : null,
+      bonusObjectiveDescription ? 'BonusObjectiveDescription = ?' : null,
+      trailId ? 'TrailID = ?' : null
+    ].filter(Boolean).join(', ');
+  
+    const values = [
+      startTime || old.StartTime,
+      endTime || old.EndTime,
+      pointsEarned || old.PointsEarned,
+      bonusPointsEarned || old.BonusPointsEarned,
+      bonusObjectiveDescription || old.BonusObjectiveDescription,
+      trailId || old.TrailID,
+      id
+    ].filter(value => value !== undefined);
+  
+    const updateQuery = `UPDATE RaceEntries SET ${fields} WHERE EntryID = ?`;
+  
     try {
-        // Insert new race entry with bonus points
-        const [results] = await pool.query(
-            'INSERT INTO RaceEntries (RacerID, BonusPointsEarned, BonusObjectiveID, BonusObjectiveDescription) VALUES (?, ?, ?, ?)', 
-            [racerId, bonusPointsEarned, bonusObjectiveId, bonusObjectiveDescription]
-        );
-        
-        // Fetch current totals for the racer
-        const [currentTotals] = await pool.query('SELECT TotalPoints FROM Racers WHERE RacerID = ?', [racerId]);
-        
-        // Calculate new total points
-        const newPoints = (currentTotals[0].TotalPoints || 0) + (bonusPointsEarned || 0);
-        
-        // Update racer's total points
-        await pool.query('UPDATE Racers SET TotalPoints = ? WHERE RacerID = ?', [newPoints, racerId]);
-        
-        res.status(201).json({ message: 'New race entry with bonus points created and racer totals updated successfully.', entryId: results.insertId });
+      await pool.query(updateQuery, values);
+  
+      // Update the racer's total points, mileage, and elevation gain
+      const pointsDiff = (pointsEarned || 0) - (old.pointsEarned || 0);
+      const bonusPointsDiff = (bonusPointsEarned || 0) - (old.bonusPointsEarned || 0);
+      const totalPointsDiff = pointsDiff + bonusPointsDiff;
+  
+      let mileageDiff = 0;
+      let elevationGainDiff = 0;
+  
+      if (trailId) {
+        const [newTrail] = await pool.query('SELECT mileage, elevationGain FROM Trails WHERE TrailID = ?', [trailId]);
+        if (newTrail.length > 0) {
+          mileageDiff = newTrail[0].mileage - (old.trailId ? old.mileage : 0);
+          elevationGainDiff = newTrail[0].elevationGain - (old.trailId ? old.elevationGain : 0);
+        }
+      }
+  
+      await pool.query(`
+        UPDATE Racers 
+        SET TotalPoints = TotalPoints + ?, TotalMiles = TotalMiles + ?, TotalElevationGain = TotalElevationGain + ?
+        WHERE RacerID = ?
+      `, [totalPointsDiff, mileageDiff, elevationGainDiff, old.RacerID]);
+  
+      res.status(200).json({ message: 'Race entry updated successfully' });
     } catch (error) {
-        console.error('Error creating new race entry or updating racer totals:', error);
-        res.status(500).json({ message: 'Failed to create new race entry with bonus points and update racer totals.' });
+      console.error('Error updating race entry:', error);
+      res.status(500).json({ message: 'Error updating race entry' });
     }
-});
+  });  
 
-// DELETE request to remove a race entry
-router.delete('/:entryId', (req, res) => {
-    const { entryId } = req.params;
-
-    if (!entryId) {
-        return res.status(400).json({ message: 'Entry ID is required' });
+// DELETE race entry and update Racer points/mileage/elevation
+router.delete('/:id', async (req, res) => {
+    const { id } = req.params;
+  
+    // Fetch the entry to get the points and other values
+    const [entry] = await pool.query('SELECT * FROM RaceEntries WHERE EntryID = ?', [id]);
+  
+    if (entry.length === 0) {
+      return res.status(404).json({ message: 'Race entry not found' });
     }
-
+  
+    const e = entry[0];
+  
     const deleteQuery = 'DELETE FROM RaceEntries WHERE EntryID = ?';
-    pool.query(deleteQuery, [entryId], (error, results) => {
-        if (error) {
-            console.error(`Error deleting race entry with ID: ${entryId}`, error);
-            return res.status(500).json({ message: 'Error deleting race entry' });
+  
+    try {
+      await pool.query(deleteQuery, [id]);
+  
+      // Update the racer's total points, mileage, and elevation gain
+      const totalPointsReduction = (e.pointsEarned || 0) + (e.bonusPointsEarned || 0);
+      let mileageReduction = 0;
+      let elevationReduction = 0;
+  
+      if (e.trailId) {
+        // Fetch the trail details
+        const [trail] = await pool.query('SELECT mileage, elevationGain FROM Trails WHERE TrailID = ?', [e.trailId]);
+        if (trail.length > 0) {
+          mileageReduction = trail[0].mileage;
+          elevationReduction = trail[0].elevationGain;
         }
-        if (results.affectedRows === 0) {
-            return res.status(404).json({ message: 'Race entry not found' });
-        }
-        res.status(200).json({ message: `Race entry with ID ${entryId} deleted successfully.` });
-    });
-});
+      }
+  
+      await pool.query(`
+        UPDATE Racers 
+        SET TotalPoints = TotalPoints - ?, TotalMiles = TotalMiles - ?, TotalElevationGain = TotalElevationGain - ?
+        WHERE RacerID = ?
+      `, [totalPointsReduction, mileageReduction, elevationReduction, e.RacerID]);
+  
+      res.status(200).json({ message: 'Race entry deleted successfully' });
+    } catch (error) {
+      console.error('Error deleting race entry:', error);
+      res.status(500).json({ message: 'Error deleting race entry' });
+    }
+  });   
 
 module.exports = router;

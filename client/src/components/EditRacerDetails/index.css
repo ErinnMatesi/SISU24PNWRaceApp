@@ -1,0 +1,35 @@
+.racer-details {
+  margin-top: 20px;
+}
+
+.racer-details h2 {
+  margin-bottom: 10px;
+}
+
+.racer-details p {
+  margin: 5px 0;
+}
+
+.racer-details button {
+  padding: 5px 10px;
+  margin-right: 10px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.racer-details button:hover {
+  background-color: #0056b3;
+}
+
+.racer-details .form-group {
+  margin-bottom: 10px;
+}
+
+.racer-details .form-group input,
+.racer-details .form-group select {
+  width: 100%;
+  padding: 5px;
+  margin-top: 5px;
+}

@@ -3,17 +3,32 @@ const router = express.Router();
 const pool = require('../config/dbConfig'); // Make sure to include the path to your dbConfig
 
 // Get all racers
-router.get('/', (req, res) => {
-    pool.query('SELECT * FROM Racers', (error, results) => {
-        if (error) {
-            console.error('Error fetching data from database:', error);
-            return res.status(500).json({ message: 'Error retrieving racers' });
-        }
-        res.status(200).json(results);
-    });
-});
+router.get('/', async (req, res) => {
+    try {
+      const [results] = await pool.query('SELECT * FROM Racers');
+      res.status(200).json(results);
+    } catch (error) {
+      console.error('Error fetching racers:', error);
+      res.status(500).json({ message: 'Error fetching racers' });
+    }
+  });
 
-// fetching racer details by bib number
+//   Fetch by Racer ID
+router.get('/:id', async (req, res) => {
+    const { id } = req.params;
+    try {
+        const [results] = await pool.query('SELECT * FROM Racers WHERE RacerID = ?', [id]);
+        if (results.length === 0) {
+        return res.status(404).json({ message: 'Racer not found' });
+        }
+        res.status(200).json(results[0]);
+    } catch (error) {
+        console.error('Error fetching racer:', error);
+        res.status(500).json({ message: 'Error fetching racer' });
+    }
+  });
+
+// Fetch racer details by bib number
 router.get('/:bibNumber', async (req, res) => {
     const { bibNumber } = req.params;
     try {
@@ -48,30 +63,27 @@ router.post('/', async (req, res) => {
 });
 
 // PUT request to update a racer
-router.put('/:racerId', (req, res) => {
-  const { racerId } = req.params;
-  const { fullName, gender, age, bibNumber, division, teamId } = req.body;
-
-  // Check if racer ID is provided
-  if (!racerId) {
-      return res.status(400).json({ message: 'Racer ID is required' });
-  }
-
-  // Optional: Add additional validation as needed
-
-  // Update logic with error handling
-  const updateQuery = 'UPDATE Racers SET FullName = ?, Gender = ?, Age = ?, BibNumber = ?, Division = ?, TeamID = ? WHERE RacerID = ?';
-  pool.query(updateQuery, [fullName, gender, age, bibNumber, division, teamId, racerId], (error, results) => {
-      if (error) {
-          console.error(`Error updating racer with ID: ${racerId}`, error);
-          return res.status(500).json({ message: 'Error updating racer' });
-      }
+router.put('/:id', async (req, res) => {
+    const { id } = req.params;
+    const { firstName, lastName, gender, age, bibNumber, division, teamId } = req.body;
+    
+    const updateQuery = `
+      UPDATE Racers 
+      SET FirstName = ?, LastName = ?, Gender = ?, Age = ?, BibNumber = ?, Division = ?, TeamID = ?
+      WHERE RacerID = ?
+    `;
+    
+    try {
+      const [results] = await pool.query(updateQuery, [firstName, lastName, gender, age, bibNumber, division, teamId || null, id]);
       if (results.affectedRows === 0) {
-          return res.status(404).json({ message: 'Racer not found' });
+        return res.status(404).json({ message: 'Racer not found' });
       }
-      res.status(200).json({ message: `Racer with ID ${racerId} updated successfully.` });
-  });
-});
+      res.status(200).json({ message: 'Racer updated successfully' });
+    } catch (error) {
+      console.error('Error updating racer:', error);
+      res.status(500).json({ message: 'Error updating racer' });
+    }
+  });  
 
 // DELETE request to remove a racer
 router.delete('/:racerId', (req, res) => {
