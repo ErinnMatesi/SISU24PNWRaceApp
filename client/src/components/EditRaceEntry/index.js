@@ -139,15 +139,6 @@ const EditRaceEntry = ({ entry, onClose }) => {
           onChange={handleInputChange}
         />
       </label>
-      <label>
-        Bonus Objective Description:
-        <input 
-          type="text"
-          name="BonusObjectiveDescription"
-          value={updatedEntry.BonusObjectiveDescription}
-          onChange={handleInputChange}
-        />
-      </label>
       <button onClick={handleSave}>Save</button>
       <button onClick={onClose}>Cancel</button>
       <button onClick={handleDelete}>Delete</button>

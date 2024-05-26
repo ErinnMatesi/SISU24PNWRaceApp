@@ -206,7 +206,7 @@ router.patch('/checkin/:entryId', async (req, res) => {
 });
 
 // EDIT a race entry
-router.patch('/raceEntry/:id', async (req, res) => {
+router.patch('/:id', async (req, res) => {
     const { id } = req.params;
     const { startTime, endTime, pointsEarned, bonusPointsEarned, bonusObjectiveDescription, trailId } = req.body;
   
