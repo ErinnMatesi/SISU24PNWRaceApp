@@ -84,6 +84,23 @@ router.get('/recent', async (req, res) => {
     }
 });
 
+// GET all race entries for a specific racer
+router.get('/:RacerID', async (req, res) => {
+  const { RacerID } = req.params;
+
+  const selectQuery = `
+    SELECT * FROM RaceEntries WHERE RacerID = ?
+  `;
+
+  try {
+    const [results] = await pool.query(selectQuery, [RacerID]);
+    res.status(200).json(results);
+  } catch (error) {
+    console.error('Error fetching race entries:', error);
+    res.status(500).json({ message: 'Error fetching race entries' });
+  }
+});
+
 // POST request to add a new CheckOut race entry
 router.post('/checkout', async (req, res) => {
     console.log('Received race entry data:', req.body);
@@ -188,6 +205,7 @@ router.patch('/checkin/:entryId', async (req, res) => {
     }
 });
 
+// EDIT a race entry
 router.patch('/raceEntry/:id', async (req, res) => {
     const { id } = req.params;
     const { startTime, endTime, pointsEarned, bonusPointsEarned, bonusObjectiveDescription, trailId } = req.body;

@@ -1,8 +1,32 @@
-import React, { useState } from 'react';
+import React, { useState,  useEffect } from 'react';
 import './index.css';
+
+const trails = [
+  { id: 1, name: 'Noble Knob', },
+  { id: 2, name: 'Goat Falls' },
+  { id: 3, name: 'Snoquera Falls' },
+  { id: 4, name: 'Dalles Falls' },
+  { id: 5, name: 'Little Ranger Peak' },
+  { id: 6, name: 'Little Ranger Lookout' }
+];
+
+const bonusObjectives = [
+  { id: 1, description: 'Objective 1' },
+  { id: 2, description: 'Objective 2' },
+  { id: 3, description: 'Objective 3' },
+  { id: 4, description: 'Objective 4' }
+];
 
 const EditRaceEntry = ({ entry, onClose }) => {
   const [updatedEntry, setUpdatedEntry] = useState({ ...entry });
+
+  useEffect(() => {
+    setUpdatedEntry({ 
+      ...entry,
+      StartTime: new Date(entry.StartTime).toISOString().slice(0, 16),
+      EndTime: new Date(entry.EndTime).toISOString().slice(0, 16)
+    });
+  }, [entry]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -49,45 +73,84 @@ const EditRaceEntry = ({ entry, onClose }) => {
   return (
     <div className="modal">
       <h2>Edit Race Entry</h2>
-      <input 
-        type="datetime-local"
-        name="startTime"
-        value={updatedEntry.startTime}
-        onChange={handleInputChange}
-      />
-      <input 
-        type="datetime-local"
-        name="endTime"
-        value={updatedEntry.endTime}
-        onChange={handleInputChange}
-      />
-      <input 
-        type="number"
-        name="pointsEarned"
-        value={updatedEntry.pointsEarned}
-        onChange={handleInputChange}
-      />
-      <input 
-        type="number"
-        name="bonusPointsEarned"
-        value={updatedEntry.bonusPointsEarned}
-        onChange={handleInputChange}
-      />
-      <input 
-        type="text"
-        name="bonusObjectiveDescription"
-        value={updatedEntry.bonusObjectiveDescription}
-        onChange={handleInputChange}
-      />
-      <input 
-        type="number"
-        name="trailId"
-        value={updatedEntry.trailId}
-        onChange={handleInputChange}
-      />
+      <label>
+        Trail:
+        <select
+          name="TrailID"
+          value={updatedEntry.TrailID || ''}
+          onChange={handleInputChange}
+        >
+          <option value="">Select Trail</option>
+          {trails.map(trail => (
+            <option key={trail.id} value={trail.id}>
+              {trail.name}
+            </option>
+          ))}
+        </select>
+      </label>
+      <label>
+        Start Time:
+        <input 
+          type="datetime-local"
+          name="StartTime"
+          value={updatedEntry.StartTime}
+          onChange={handleInputChange}
+        />
+      </label>
+      <label>
+        End Time:
+        <input 
+          type="datetime-local"
+          name="EndTime"
+          value={updatedEntry.EndTime}
+          onChange={handleInputChange}
+        />
+      </label>
+      <label>
+        Points Earned:
+        <input 
+          type="number"
+          name="PointsEarned"
+          value={updatedEntry.PointsEarned}
+          onChange={handleInputChange}
+        />
+      </label>
+      <label>
+        Bonus Objective:
+        <select
+          name="BonusObjectiveID"
+          value={updatedEntry.BonusObjectiveID || ''}
+          onChange={handleInputChange}
+        >
+          <option value="">Select Bonus Objective</option>
+          {bonusObjectives.map(objective => (
+            <option key={objective.id} value={objective.id}>
+              {objective.description}
+            </option>
+          ))}
+        </select>
+      </label>
+      <label>
+        Bonus Points Earned:
+        <input 
+          type="number"
+          name="BonusPointsEarned"
+          value={updatedEntry.BonusPointsEarned}
+          onChange={handleInputChange}
+        />
+      </label>
+      <label>
+        Bonus Objective Description:
+        <input 
+          type="text"
+          name="BonusObjectiveDescription"
+          value={updatedEntry.BonusObjectiveDescription}
+          onChange={handleInputChange}
+        />
+      </label>
       <button onClick={handleSave}>Save</button>
-      <button onClick={handleDelete}>Delete</button>
       <button onClick={onClose}>Cancel</button>
+      <button onClick={handleDelete}>Delete</button>
     </div>
   );
 };

@@ -15,8 +15,8 @@ const { racersRouter, teamsRouter, trailsRouter, raceEntryRouter, bonusObjective
 // Middleware
 app.use(cors({
     origin: 'http://localhost:3001', // Adjust this to match your client URL
-    methods: ['GET', 'POST', 'PATCH', 'DELETE'],
-    credentials: true
+    methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE'],
+    credentials: true,
 }));
 app.use(morgan('dev')); // Logger
 app.use(bodyParser.json()); // Parse JSON bodies

@@ -65,7 +65,9 @@ router.post('/', async (req, res) => {
 // PUT request to update a racer
 router.put('/:id', async (req, res) => {
     const { id } = req.params;
-    const { firstName, lastName, gender, age, bibNumber, division, teamId } = req.body;
+    const { FirstName, LastName, Gender, Age, BibNumber, Division, TeamID } = req.body;
+
+    console.log('Received data:', req.body);
     
     const updateQuery = `
       UPDATE Racers 
@@ -74,7 +76,7 @@ router.put('/:id', async (req, res) => {
     `;
     
     try {
-      const [results] = await pool.query(updateQuery, [firstName, lastName, gender, age, bibNumber, division, teamId || null, id]);
+      const [results] = await pool.query(updateQuery, [FirstName, LastName, Gender, Age, BibNumber, Division, TeamID || null, id]);
       if (results.affectedRows === 0) {
         return res.status(404).json({ message: 'Racer not found' });
       }
