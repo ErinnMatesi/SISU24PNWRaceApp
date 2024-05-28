@@ -206,71 +206,78 @@ router.patch('/checkin/:entryId', async (req, res) => {
 });
 
 // EDIT a race entry
-router.patch('/:id', async (req, res) => {
-    const { id } = req.params;
-    const { startTime, endTime, pointsEarned, bonusPointsEarned, bonusObjectiveDescription, trailId } = req.body;
-  
-    // Fetch the old entry to compare values
-    const [oldEntry] = await pool.query('SELECT * FROM RaceEntries WHERE EntryID = ?', [id]);
-  
-    if (oldEntry.length === 0) {
-      return res.status(404).json({ message: 'Race entry not found' });
-    }
-  
-    const old = oldEntry[0];
-  
-    const fields = [
-      startTime ? 'StartTime = ?' : null,
-      endTime ? 'EndTime = ?' : null,
-      pointsEarned ? 'PointsEarned = ?' : null,
-      bonusPointsEarned ? 'BonusPointsEarned = ?' : null,
-      bonusObjectiveDescription ? 'BonusObjectiveDescription = ?' : null,
-      trailId ? 'TrailID = ?' : null
-    ].filter(Boolean).join(', ');
-  
-    const values = [
-      startTime || old.StartTime,
-      endTime || old.EndTime,
-      pointsEarned || old.PointsEarned,
-      bonusPointsEarned || old.BonusPointsEarned,
-      bonusObjectiveDescription || old.BonusObjectiveDescription,
-      trailId || old.TrailID,
-      id
-    ].filter(value => value !== undefined);
-  
-    const updateQuery = `UPDATE RaceEntries SET ${fields} WHERE EntryID = ?`;
-  
-    try {
-      await pool.query(updateQuery, values);
-  
-      // Update the racer's total points, mileage, and elevation gain
-      const pointsDiff = (pointsEarned || 0) - (old.pointsEarned || 0);
-      const bonusPointsDiff = (bonusPointsEarned || 0) - (old.bonusPointsEarned || 0);
-      const totalPointsDiff = pointsDiff + bonusPointsDiff;
-  
-      let mileageDiff = 0;
-      let elevationGainDiff = 0;
-  
-      if (trailId) {
-        const [newTrail] = await pool.query('SELECT mileage, elevationGain FROM Trails WHERE TrailID = ?', [trailId]);
-        if (newTrail.length > 0) {
-          mileageDiff = newTrail[0].mileage - (old.trailId ? old.mileage : 0);
-          elevationGainDiff = newTrail[0].elevationGain - (old.trailId ? old.elevationGain : 0);
-        }
+router.put('/:id', async (req, res) => {
+  const { id } = req.params;
+  const {
+    StartTime,
+    EndTime,
+    PointsEarned,
+    BonusPointsEarned,
+    BonusObjectiveDescription,
+    TrailID
+  } = req.body;
+
+  // Fetch the old entry to compare values
+  const [oldEntry] = await pool.query('SELECT * FROM RaceEntries WHERE EntryID = ?', [id]);
+
+  if (oldEntry.length === 0) {
+    return res.status(404).json({ message: 'Race entry not found' });
+  }
+
+  const old = oldEntry[0];
+
+  const fields = [
+    StartTime ? 'StartTime = ?' : null,
+    EndTime ? 'EndTime = ?' : null,
+    PointsEarned ? 'PointsEarned = ?' : null,
+    BonusPointsEarned ? 'BonusPointsEarned = ?' : null,
+    BonusObjectiveDescription ? 'BonusObjectiveDescription = ?' : null,
+    TrailID ? 'TrailID = ?' : null
+  ].filter(Boolean).join(', ');
+
+  const values = [
+    StartTime || old.StartTime,
+    EndTime || old.EndTime,
+    PointsEarned || old.PointsEarned,
+    BonusPointsEarned || old.BonusPointsEarned,
+    BonusObjectiveDescription || old.BonusObjectiveDescription,
+    TrailID || old.TrailID,
+    id
+  ].filter(value => value !== undefined);
+
+  const updateQuery = `UPDATE RaceEntries SET ${fields} WHERE EntryID = ?`;
+
+  try {
+    await pool.query(updateQuery, values);
+
+    // Update the racer's total points, mileage, and elevation gain
+    const pointsDiff = (PointsEarned || 0) - (old.PointsEarned || 0);
+    const bonusPointsDiff = (BonusPointsEarned || 0) - (old.BonusPointsEarned || 0);
+    const totalPointsDiff = pointsDiff + bonusPointsDiff;
+
+    let mileageDiff = 0;
+    let elevationGainDiff = 0;
+
+    if (TrailID) {
+      const [newTrail] = await pool.query('SELECT mileage, elevationGain FROM Trails WHERE TrailID = ?', [TrailID]);
+      if (newTrail.length > 0) {
+        mileageDiff = newTrail[0].mileage - (old.TrailID ? old.mileage : 0);
+        elevationGainDiff = newTrail[0].elevationGain - (old.TrailID ? old.elevationGain : 0);
       }
-  
-      await pool.query(`
-        UPDATE Racers 
-        SET TotalPoints = TotalPoints + ?, TotalMiles = TotalMiles + ?, TotalElevationGain = TotalElevationGain + ?
-        WHERE RacerID = ?
-      `, [totalPointsDiff, mileageDiff, elevationGainDiff, old.RacerID]);
-  
-      res.status(200).json({ message: 'Race entry updated successfully' });
-    } catch (error) {
-      console.error('Error updating race entry:', error);
-      res.status(500).json({ message: 'Error updating race entry' });
     }
-  });  
+
+    await pool.query(`
+      UPDATE Racers 
+      SET TotalPoints = TotalPoints + ?, TotalMiles = TotalMiles + ?, TotalElevationGain = TotalElevationGain + ?
+      WHERE RacerID = ?
+    `, [totalPointsDiff, mileageDiff, elevationGainDiff, old.RacerID]);
+
+    res.status(200).json({ message: 'Race entry updated successfully' });
+  } catch (error) {
+    console.error('Error updating race entry:', error);
+    res.status(500).json({ message: 'Error updating race entry' });
+  }
+});
 
 // DELETE race entry and update Racer points/mileage/elevation
 router.delete('/:id', async (req, res) => {
