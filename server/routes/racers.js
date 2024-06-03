@@ -13,36 +13,39 @@ router.get('/', async (req, res) => {
     }
   });
 
-//   Fetch by Racer ID
-router.get('/:id', async (req, res) => {
-    const { id } = req.params;
-    try {
-        const [results] = await pool.query('SELECT * FROM Racers WHERE RacerID = ?', [id]);
-        if (results.length === 0) {
-        return res.status(404).json({ message: 'Racer not found' });
-        }
-        res.status(200).json(results[0]);
-    } catch (error) {
-        console.error('Error fetching racer:', error);
-        res.status(500).json({ message: 'Error fetching racer' });
-    }
-  });
-
 // Fetch racer details by bib number
-router.get('/:bibNumber', async (req, res) => {
+router.get('/bib/:bibNumber', async (req, res) => {
     const { bibNumber } = req.params;
+    console.log(`Fetching racer with bib number: ${bibNumber}`);
     try {
         const [rows, fields] = await pool.query('SELECT * FROM Racers WHERE BibNumber = ?', [bibNumber]);
         if (rows.length > 0) {
             const racerDetails = rows[0];
+            console.log('Racer found:', racerDetails);
             res.json(racerDetails);
         } else {
+          console.log('Racer not found');
             res.status(404).send('Racer not found');
         }
     } catch (error) {
         console.error('Error fetching racer details:', error);
         res.status(500).send('Internal Server Error');
     }
+});
+
+//   Fetch by Racer ID
+router.get('/:id', async (req, res) => {
+  const { id } = req.params;
+  try {
+      const [results] = await pool.query('SELECT * FROM Racers WHERE RacerID = ?', [id]);
+      if (results.length === 0) {
+        return res.status(404).json({ message: 'Racer not found' });
+      }
+      res.status(200).json(results[0]);
+  } catch (error) {
+      console.error('Error fetching racer:', error);
+      res.status(500).json({ message: 'Error fetching racer' });
+  }
 });
 
 // Add a new racer

@@ -12,10 +12,19 @@ const trails = [
     { id: 6, name: 'Little Ranger Lookout' }
 ];
 
+const getPSTTime = () => {
+  const now = new Date();
+  const utcOffset = now.getTimezoneOffset() * 60000;
+  const pstOffset = -14 * 60 * 60000; // PST is UTC -8 hours
+  const pstTime = new Date(now.getTime() + utcOffset + pstOffset);
+  const formattedPSTTime = pstTime.toISOString().slice(0, 16);
+  return formattedPSTTime;
+};
+
 const CheckOutForm = () => {
     const [racerDetails, setRacerDetails] = useState(null); // State to store fetched racer details
     const [trailId, setTrailId] = useState(trails[0].id);
-    const [startTime, setStartTime] = useState(new Date().toISOString().slice(0, 16));
+    const [startTime, setStartTime] = useState(getPSTTime());
     const [confirmationMessage, setConfirmationMessage] = useState(''); // New state for confirmation message
     const { triggerRefresh } = useRaceEntries();
 
@@ -71,9 +80,9 @@ const CheckOutForm = () => {
         <BibNumberInput onRacerSelected={handleRacerSelected} />
         <div className="form-group">
             <label htmlFor="trailSelect">Trail:</label>
-            <select id="trailSelect" value={trailId} onChange={(e) => setTrailId(e.target.value)}>
+            <select id="trailSelect" value={trailId} onChange={(e) => setTrailId(e.target.value)} className={`trail-${trailId}`}>
                 {trails.map(trail => (
-                    <option key={trail.id} value={trail.id}>{trail.name}</option>
+                    <option key={trail.id} value={trail.id} className={`trail-${trail.id}`}>{trail.name}</option>
                 ))}
             </select>
         </div>

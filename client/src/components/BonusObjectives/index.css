@@ -51,3 +51,27 @@ h2 {
   border-radius: 4px;
   text-align: center;
 }
+
+.trail-1 {
+  background-color: #8A2BE2;
+}
+
+.trail-2 {
+  background-color: #FFD700;
+}
+
+.trail-3 {
+  background-color: #e644a8;
+}
+
+.trail-4 {
+  background-color: #32CD32;
+}
+
+.trail-5 {
+  background-color: #ff0000;
+}
+
+.trail-6 {
+  background-color: #5e7edf;
+}

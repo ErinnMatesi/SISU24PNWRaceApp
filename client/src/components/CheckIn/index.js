@@ -3,10 +3,19 @@ import BibNumberInput from '../BibNumberInput';
 import './index.css'; 
 import { useRaceEntries } from '../RecentRaceEntries/RaceEntryContext';
 
+const getPSTTime = () => {
+    const now = new Date();
+    const utcOffset = now.getTimezoneOffset() * 60000;
+    const pstOffset = -14 * 60 * 60000; // PST is UTC -8 hours
+    const pstTime = new Date(now.getTime() + utcOffset + pstOffset);
+    const formattedPSTTime = pstTime.toISOString().slice(0, 16);
+    return formattedPSTTime;
+};
+
 const CheckInForm = () => {
   const [racerDetails, setRacerDetails] = useState(null);
   const [trailDetails, setTrailDetails] = useState(null);
-  const [endTime, setEndTime] = useState(new Date().toISOString().slice(0, 16));
+  const [endTime, setEndTime] = useState(getPSTTime());
   const [completionStatus, setCompletionStatus] = useState('');
   const [confirmationMessage, setConfirmationMessage] = useState('');
   const [entryId, setEntryId] = useState(null);

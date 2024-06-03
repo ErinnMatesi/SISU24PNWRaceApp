@@ -9,7 +9,8 @@ export const ActiveRunnerProvider = ({ children }) => {
 
   const fetchActiveRunners = async () => {
     try {
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/raceEntry/active`);
+      const url = `${process.env.REACT_APP_API_URL}/raceEntry/active?_=${new Date().getTime()}`;
+      const response = await fetch(url);
       const data = await response.json();
       setActiveRunners(data);
     } catch ( error ) {
