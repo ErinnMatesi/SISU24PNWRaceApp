@@ -14,7 +14,7 @@ router.get('/gender/:gender', async (req, res) => {
         const query = `
             SELECT FirstName, LastName, TotalPoints
             FROM Racers
-            WHERE Gender = ?
+            WHERE Gender = ? AND Division = '24hr individual'
             ORDER BY TotalPoints DESC;
         `;
         const [results] = await pool.query(query, [gender]);
@@ -28,20 +28,21 @@ router.get('/gender/:gender', async (req, res) => {
 
 // Team Leaderboard
 router.get('/teams', async (req, res) => {
-  try {
-      const query = `
-          SELECT Teams.TeamName, SUM(Racers.TotalPoints) AS TotalTeamPoints
-          FROM Teams
-          JOIN Racers ON Teams.TeamID = Racers.TeamID
-          GROUP BY Teams.TeamID
-          ORDER BY TotalTeamPoints DESC;
-      `;
-      const [results] = await pool.query(query);
-      res.json(results);
-  } catch (error) {
-      console.error('Error fetching teams leaderboard:', error);
-      res.status(500).send('Internal Server Error');
-  }
+    try {
+        const query = `
+            SELECT Teams.TeamName, SUM(Racers.TotalPoints) AS TotalTeamPoints
+            FROM Teams
+            JOIN Racers ON Teams.TeamID = Racers.TeamID
+            GROUP BY Teams.TeamID
+            ORDER BY TotalTeamPoints DESC;
+        `;
+        const [results] = await pool.query(query);
+        console.log('Query results:', results);
+        res.json(results);
+    } catch (error) {
+        console.error('Error fetching teams leaderboard:', error);
+        res.status(500).send('Internal Server Error');
+    }
 });
 
 // 100 Miler leaderboard

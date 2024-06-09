@@ -62,7 +62,7 @@ const CheckOutForm = () => {
           // Find the selected trail's name from the trails array using trailId
           const selectedTrail = trails.find(trail => trail.id === Number(trailId));
           const selectedTrailName = selectedTrail ? selectedTrail.name : 'Unknown Trail';
-          setConfirmationMessage(`${racerDetails.FirstName} checked out on ${selectedTrailName} at ${startTime}.`);
+          setConfirmationMessage(`${racerDetails.FirstName} checked out on ${selectedTrailName}.`);
           triggerRefresh();
           console.log('Race entry created:', responseData); // For    debugging, can be removed
           setRacerDetails(null);

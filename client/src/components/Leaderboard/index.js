@@ -27,8 +27,8 @@ const Leaderboard = () => {
             <div className="category">
                 <h2>Teams</h2>
                 <ul>
-                    {teams.map((team) => (
-                        <li key={team.TeamID}>{team.TeamName} - Points: {team.TotalPoints}</li>
+                    {teams.map((team, index) => (
+                        <li key={index}>{team.TeamName} - Points: {team.TotalTeamPoints}</li>
                     ))}
                 </ul>
             </div>
