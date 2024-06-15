@@ -36,9 +36,12 @@ const RecentRaceEntries = () => {
         {entries.map((entry) => (
           <li key={entry.EntryID} className="recent-entry-item">
             {entry.FirstName} {entry.LastName} (Bib: {entry.BibNumber}) - 
-            {entry.TrailName ? `${entry.TrailName} - ${entry.HasPoints ? 'Completed' : 'Started'}` : 
-            (entry.BonusObjectiveDescription ? entry.BonusObjectiveDescription : 'No activity registered')}
-          </li>
+            {entry.TrailName ? (
+                entry.EndTime ? `${entry.TrailName} - Completed` : `${entry.TrailName} - Started`
+            ) : (
+                entry.BonusObjectiveDescription ? entry.BonusObjectiveDescription : 'No activity registered'
+            )}
+        </li>
         ))}
       </ul>
     </div>
