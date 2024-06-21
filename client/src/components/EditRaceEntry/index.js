@@ -11,10 +11,14 @@ const trails = [
 ];
 
 const bonusObjectives = [
-  { id: 1, description: 'Objective 1' },
-  { id: 2, description: 'Objective 2' },
-  { id: 3, description: 'Objective 3' },
-  { id: 4, description: 'Objective 4' }
+  { id: 10, description: 'Compass Challenge' },
+  { id: 11, description: 'Paracord Bracelet' },
+  { id: 12, description: 'Waterfall' },
+  { id: 13, description: 'Egg Carry' },
+  { id: 14, description: 'Poem Memorization' },
+  { id: 15, description: 'Crossword' },
+  { id: 16, description: 'Midnight Yoga' },
+  { id: 17, description: 'SISU Service' },
 ];
 
 const EditRaceEntry = ({ entry, onClose }) => {

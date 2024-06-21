@@ -256,18 +256,18 @@ router.put('/:id', async (req, res) => {
   try {
     await pool.query(updateQuery, values);
 
-    // Update the racer's total points, mileage, and elevation gain
+    // Update the racer's total points, distance, and elevation gain
     const pointsDiff = (PointsEarned || 0) - (old.PointsEarned || 0);
     const bonusPointsDiff = (BonusPointsEarned || 0) - (old.BonusPointsEarned || 0);
     const totalPointsDiff = pointsDiff + bonusPointsDiff;
 
-    let mileageDiff = 0;
+    let distanceDiff = 0;
     let elevationGainDiff = 0;
 
     if (TrailID) {
-      const [newTrail] = await pool.query('SELECT mileage, elevationGain FROM Trails WHERE TrailID = ?', [TrailID]);
+      const [newTrail] = await pool.query('SELECT Distance, ElevationGain FROM Trails WHERE TrailID = ?', [TrailID]);
       if (newTrail.length > 0) {
-        mileageDiff = newTrail[0].mileage - (old.TrailID ? old.mileage : 0);
+        distanceDiff = newTrail[0].distance - (old.TrailID ? old.distance : 0);
         elevationGainDiff = newTrail[0].elevationGain - (old.TrailID ? old.elevationGain : 0);
       }
     }
@@ -276,7 +276,7 @@ router.put('/:id', async (req, res) => {
       UPDATE Racers 
       SET TotalPoints = TotalPoints + ?, TotalMiles = TotalMiles + ?, TotalElevationGain = TotalElevationGain + ?
       WHERE RacerID = ?
-    `, [totalPointsDiff, mileageDiff, elevationGainDiff, old.RacerID]);
+    `, [totalPointsDiff, distanceDiff, elevationGainDiff, old.RacerID]);
 
     res.status(200).json({ message: 'Race entry updated successfully' });
   } catch (error) {
@@ -285,7 +285,7 @@ router.put('/:id', async (req, res) => {
   }
 });
 
-// DELETE race entry and update Racer points/mileage/elevation
+// DELETE race entry and update Racer points/distance/elevation
 router.delete('/:id', async (req, res) => {
     const { id } = req.params;
   
@@ -303,16 +303,16 @@ router.delete('/:id', async (req, res) => {
     try {
       await pool.query(deleteQuery, [id]);
   
-      // Update the racer's total points, mileage, and elevation gain
+      // Update the racer's total points, distance, and elevation gain
       const totalPointsReduction = (e.pointsEarned || 0) + (e.bonusPointsEarned || 0);
-      let mileageReduction = 0;
+      let distanceReduction = 0;
       let elevationReduction = 0;
   
       if (e.trailId) {
         // Fetch the trail details
-        const [trail] = await pool.query('SELECT mileage, elevationGain FROM Trails WHERE TrailID = ?', [e.trailId]);
+        const [trail] = await pool.query('SELECT Distance, ElevationGain FROM Trails WHERE TrailID = ?', [e.trailId]);
         if (trail.length > 0) {
-          mileageReduction = trail[0].mileage;
+          distanceReduction = trail[0].distance;
           elevationReduction = trail[0].elevationGain;
         }
       }
@@ -321,7 +321,7 @@ router.delete('/:id', async (req, res) => {
         UPDATE Racers 
         SET TotalPoints = TotalPoints - ?, TotalMiles = TotalMiles - ?, TotalElevationGain = TotalElevationGain - ?
         WHERE RacerID = ?
-      `, [totalPointsReduction, mileageReduction, elevationReduction, e.RacerID]);
+      `, [totalPointsReduction, distanceReduction, elevationReduction, e.RacerID]);
   
       res.status(200).json({ message: 'Race entry deleted successfully' });
     } catch (error) {
