@@ -16,6 +16,8 @@ const RacerDetails = ({ racer }) => {
   const [updatedRacer, setUpdatedRacer] = useState({ ...racer });
   const [editingEntry, setEditingEntry] = useState(null);
   const [raceEntries, setRaceEntries] = useState([]);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [entryToDelete, setEntryToDelete] = useState(null);
 
   useEffect(() => {
     // Fetch race entries when the component mounts or when the racer changes
@@ -59,9 +61,14 @@ const RacerDetails = ({ racer }) => {
     }
   };
 
-  const handleDeleteEntry = async (entryId) => {
+  const confirmDeleteEntry = (entryId) => {
+    setEntryToDelete(entryId);
+    setShowDeleteConfirm(true);
+  };
+
+  const handleDeleteEntry = async () => {
     try {
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/raceEntry/${entryId}`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/raceEntry/${entryToDelete}`, {
         method: 'DELETE'
       });
       if (!response.ok) {
@@ -70,10 +77,9 @@ const RacerDetails = ({ racer }) => {
       const data = await response.json();
       alert(data.message);
       // Update the UI to remove the deleted entry
-      setUpdatedRacer({
-        ...updatedRacer,
-        raceEntries: updatedRacer.raceEntries.filter(entry => entry.EntryID !== entryId)
-      });
+      setRaceEntries(raceEntries.filter(entry => entry.EntryID !== entryToDelete));
+      setShowDeleteConfirm(false);
+      setEntryToDelete(null);
     } catch (error) {
       console.error('Error deleting race entry:', error);
     }
@@ -184,12 +190,19 @@ const RacerDetails = ({ racer }) => {
             <p>End Time: {entry.EndTime}</p>
             <p>Points Earned: {entry.PointsEarned}</p>
             <button onClick={() => setEditingEntry(entry)}>Edit</button>
-            <button onClick={() => handleDeleteEntry(entry.EntryID)}>Delete</button>
+            <button onClick={() => confirmDeleteEntry(entry.EntryID)}>Delete</button>
           </li>
         ))}
       </ul>
       {editingEntry && (
         <EditRaceEntry entry={editingEntry} onClose={() => setEditingEntry(null)} />
+      )}
+      {showDeleteConfirm && (
+        <div className="modal">
+          <p>Are you sure you want to delete this race entry?</p>
+          <button onClick={handleDeleteEntry}>Yes</button>
+          <button onClick={() => setShowDeleteConfirm(false)}>No</button>
+        </div>
       )}
     </div>
   );

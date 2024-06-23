@@ -131,7 +131,7 @@ router.post('/checkout', async (req, res) => {
     }
 });
 
-// POST Bonus Objective Entry
+// POST Bonus Objective Entry TRAIL ID ONLY
 router.post('/bonusPoints', async (req, res) => {
     const { racerId, bonusPointsEarned, bonusObjectiveId, bonusObjectiveDescription } = req.body;
     
@@ -214,69 +214,25 @@ router.patch('/checkin/:entryId', async (req, res) => {
 // EDIT a race entry
 router.put('/:id', async (req, res) => {
   const { id } = req.params;
-  const {
-    StartTime,
-    EndTime,
-    PointsEarned,
-    BonusPointsEarned,
-    BonusObjectiveDescription,
-    TrailID
-  } = req.body;
-
-  // Fetch the old entry to compare values
-  const [oldEntry] = await pool.query('SELECT * FROM RaceEntries WHERE EntryID = ?', [id]);
-
-  if (oldEntry.length === 0) {
-    return res.status(404).json({ message: 'Race entry not found' });
-  }
-
-  const old = oldEntry[0];
-
-  const fields = [
-    StartTime ? 'StartTime = ?' : null,
-    EndTime ? 'EndTime = ?' : null,
-    PointsEarned ? 'PointsEarned = ?' : null,
-    BonusPointsEarned ? 'BonusPointsEarned = ?' : null,
-    BonusObjectiveDescription ? 'BonusObjectiveDescription = ?' : null,
-    TrailID ? 'TrailID = ?' : null
-  ].filter(Boolean).join(', ');
-
-  const values = [
-    StartTime || old.StartTime,
-    EndTime || old.EndTime,
-    PointsEarned || old.PointsEarned,
-    BonusPointsEarned || old.BonusPointsEarned,
-    BonusObjectiveDescription || old.BonusObjectiveDescription,
-    TrailID || old.TrailID,
-    id
-  ].filter(value => value !== undefined);
-
-  const updateQuery = `UPDATE RaceEntries SET ${fields} WHERE EntryID = ?`;
+  const { TrailID } = req.body;
 
   try {
-    await pool.query(updateQuery, values);
+    // Fetch the old entry to compare values
+    const [oldEntry] = await pool.query('SELECT * FROM RaceEntries WHERE EntryID = ?', [id]);
 
-    // Update the racer's total points, distance, and elevation gain
-    const pointsDiff = (PointsEarned || 0) - (old.PointsEarned || 0);
-    const bonusPointsDiff = (BonusPointsEarned || 0) - (old.BonusPointsEarned || 0);
-    const totalPointsDiff = pointsDiff + bonusPointsDiff;
-
-    let distanceDiff = 0;
-    let elevationGainDiff = 0;
-
-    if (TrailID) {
-      const [newTrail] = await pool.query('SELECT Distance, ElevationGain FROM Trails WHERE TrailID = ?', [TrailID]);
-      if (newTrail.length > 0) {
-        distanceDiff = newTrail[0].distance - (old.TrailID ? old.distance : 0);
-        elevationGainDiff = newTrail[0].elevationGain - (old.TrailID ? old.elevationGain : 0);
-      }
+    if (oldEntry.length === 0) {
+      return res.status(404).json({ message: 'Race entry not found' });
     }
 
-    await pool.query(`
-      UPDATE Racers 
-      SET TotalPoints = TotalPoints + ?, TotalMiles = TotalMiles + ?, TotalElevationGain = TotalElevationGain + ?
-      WHERE RacerID = ?
-    `, [totalPointsDiff, distanceDiff, elevationGainDiff, old.RacerID]);
+    const old = oldEntry[0];
+
+    // Ensure the entry is not completed
+    if (old.EndTime) {
+      return res.status(400).json({ message: 'Cannot edit a completed race entry' });
+    }
+
+    // Update TrailID
+    await pool.query('UPDATE RaceEntries SET TrailID = ? WHERE EntryID = ?', [TrailID || old.TrailID, id]);
 
     res.status(200).json({ message: 'Race entry updated successfully' });
   } catch (error) {
