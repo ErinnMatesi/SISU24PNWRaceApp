@@ -22,10 +22,10 @@ app.use(morgan('dev')); // Logger
 app.use(bodyParser.json()); // Parse JSON bodies
 app.use(bodyParser.urlencoded({ extended: true })); // Parse URL-encoded bodies
 // Middleware to log all incoming requests
-app.use((req, res, next) => {
-    console.log(`Incoming request: ${req.method} ${req.url}`);
-    next();
-});
+// app.use((req, res, next) => {
+//     console.log(`Incoming request: ${req.method} ${req.url}`);
+//     next();
+// });
 
 // Use routes
 app.use('/racers', racersRouter);
