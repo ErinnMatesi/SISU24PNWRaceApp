@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const pool = require('../config/dbConfig'); // Make sure to include the path to your dbConfig
+const pool = require('../config/dbConfig');
 
 // Get all racers
 router.get('/', async (req, res) => {
